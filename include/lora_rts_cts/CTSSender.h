@@ -26,7 +26,6 @@
 
 namespace gr {
   namespace lora_rts_cts {
-
     /*!
      * \brief <+description of block+>
      * \ingroup lora_rts_cts

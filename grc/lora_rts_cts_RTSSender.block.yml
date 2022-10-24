@@ -8,4 +8,11 @@ inputs:
 - label: in
   domain: stream
   dtype: complex
+- domain: message
+  id: UserDataIn
+outputs:
+- domain: message
+  id: RTSOUT
+- domain: message
+  id: UserDataOut
 file_format: 1

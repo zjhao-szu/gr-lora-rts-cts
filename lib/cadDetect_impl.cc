@@ -158,7 +158,7 @@ namespace gr {
         unsigned int num_consumed = m_samples_per_symbol;
         uint32_t maxIndex = 0;
         float maxValue = 0;
-        bool preambleFound = false;
+
         m_cad_result = false;
     
         

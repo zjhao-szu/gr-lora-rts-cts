@@ -1,1 +1,0 @@
-/usr/bin/c++  -O3 -DNDEBUG   CMakeFiles/_lora_rts_cts_swig_doc_tag.dir/_lora_rts_cts_swig_doc_tag.cpp.o  -o _lora_rts_cts_swig_doc_tag 

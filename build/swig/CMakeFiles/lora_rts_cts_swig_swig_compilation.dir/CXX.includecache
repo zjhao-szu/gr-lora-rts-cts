@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/zjhao/gr-lora_rts_cts/swig/lora_rts_cts_swig.i
+gnuradio.i
+/home/zjhao/gr-lora_rts_cts/swig/gnuradio.i
+lora_rts_cts_swig_doc.i
+/home/zjhao/gr-lora_rts_cts/swig/lora_rts_cts_swig_doc.i
+lora_rts_cts/RTSSender.h
+/home/zjhao/gr-lora_rts_cts/swig/lora_rts_cts/RTSSender.h
+lora_rts_cts/CTSSender.h
+/home/zjhao/gr-lora_rts_cts/swig/lora_rts_cts/CTSSender.h
+lora_rts_cts/cadDetect.h
+/home/zjhao/gr-lora_rts_cts/swig/lora_rts_cts/cadDetect.h
+lora_rts_cts/RTSSender.h
+/home/zjhao/gr-lora_rts_cts/swig/lora_rts_cts/RTSSender.h
+lora_rts_cts/CTSSender.h
+/home/zjhao/gr-lora_rts_cts/swig/lora_rts_cts/CTSSender.h
+lora_rts_cts/cadDetect.h
+/home/zjhao/gr-lora_rts_cts/swig/lora_rts_cts/cadDetect.h
+

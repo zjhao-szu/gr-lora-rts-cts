@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.8.13">
+  <compound refid="classgr_1_1lora__rts__cts_1_1cadDetect" kind="class"><name>gr::lora_rts_cts::cadDetect</name>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect_1aa32a989b759c31a2449f951d337c018f" kind="typedef"><name>sptr</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect_1a52ab5f37be7d73dd8d3e101147989ffa" kind="function"><name>make</name></member>
+  </compound>
+  <compound refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl" kind="class"><name>gr::lora_rts_cts::cadDetect_impl</name>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1a5d46642450cf421e1f5d08b71d14362d" kind="variable"><name>m_cad_port</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1af31101a867fc463197fafca056c2b19a" kind="variable"><name>m_state</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1aea706c358f6ccb0eb3cb14b2fe122991" kind="variable"><name>m_sf</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1ad6d29577bfa8fa78dcf61c8040e85f8b" kind="variable"><name>m_samp_rate</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1a8e9ef24adaf726e3ed05e5f4c3fc674c" kind="variable"><name>m_bw</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1aa5ad2af731a39cb0ed3a6da501b7ff9e" kind="variable"><name>m_number_of_bins</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1a2d2a9283983bcf4dd86d63552936dc72" kind="variable"><name>m_oversample_rate</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1aedae55e6baa5dfbfc44df7ff7e53a64e" kind="variable"><name>m_samples_per_symbol</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1a0794c13da3e2753301698a0850864e05" kind="variable"><name>m_fft_size</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1af78e96657020a3c23d699f51fe2f8105" kind="variable"><name>m_upchirp</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1a7487cbb67a5eaa40b0b42da32f9f8d98" kind="variable"><name>m_downchirp</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1a17c08d6393b1c8273bcfa7fb053ced6f" kind="variable"><name>m_cad_result</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1af48054b07c486b65a0272b88dc4a1932" kind="variable"><name>m_argmaxHistory</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1a79989cbaa8ec7926c7f7a820248c7f73" kind="variable"><name>m_preamble_drift_max</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1ad653105580acf47d6bcede33b3a41d35" kind="function"><name>CADDetect_Correlation</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1a047eee4a163c7eb1b3cb64049fe8b943" kind="function"><name>CADDetect_MinBin</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1a49aaeb486a79c7bdf8fc8236daeeca6f" kind="function"><name>searchFFTPeek</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1a90e0713a06671c1f1e7401568d01552a" kind="function"><name>argmax</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1a212ef4c28ee31edb4bd9e4373d82948d" kind="function"><name>pmod</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1a2fa12fb188ea7a6f7b81992f37ece15f" kind="function"><name>cadDetect_impl</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1a169685c2c50a51bff6130babb87f6b54" kind="function"><name>~cadDetect_impl</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1a5c35f3e313e54159c553a01f14b21f17" kind="function"><name>forecast</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl_1a091d200294a929e11c02bb0ac0915fe7" kind="function"><name>general_work</name></member>
+  </compound>
+  <compound refid="classgr_1_1lora__rts__cts_1_1CTSSender" kind="class"><name>gr::lora_rts_cts::CTSSender</name>
+    <member refid="classgr_1_1lora__rts__cts_1_1CTSSender_1a8e391b04e1364b09ab994bb026b0a2ae" kind="typedef"><name>sptr</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1CTSSender_1a1824cefe95419c2a226035c44f3feab6" kind="function"><name>make</name></member>
+  </compound>
+  <compound refid="classgr_1_1lora__rts__cts_1_1CTSSender__impl" kind="class"><name>gr::lora_rts_cts::CTSSender_impl</name>
+    <member refid="classgr_1_1lora__rts__cts_1_1CTSSender__impl_1a41e2ff8858f0bb20a3d3558da682dec4" kind="function"><name>CTSSender_impl</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1CTSSender__impl_1aacfd9e88446fca59d7520ba453ea72fd" kind="function"><name>~CTSSender_impl</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1CTSSender__impl_1a5cd9db996f5bc5168c8b531e94d629e4" kind="function"><name>forecast</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1CTSSender__impl_1a9b4822efbb6806da5d593c41b43a5715" kind="function"><name>general_work</name></member>
+  </compound>
+  <compound refid="classgr_1_1lora__rts__cts_1_1RTSSender" kind="class"><name>gr::lora_rts_cts::RTSSender</name>
+    <member refid="classgr_1_1lora__rts__cts_1_1RTSSender_1a907486d2aa0bfa7abd24b2a15a7e02e6" kind="typedef"><name>sptr</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1RTSSender_1a6115579bad08875472343d8050622541" kind="function"><name>make</name></member>
+  </compound>
+  <compound refid="classgr_1_1lora__rts__cts_1_1RTSSender__impl" kind="class"><name>gr::lora_rts_cts::RTSSender_impl</name>
+    <member refid="classgr_1_1lora__rts__cts_1_1RTSSender__impl_1a982591ddfb189abcfadfeeee5aad9cb9" kind="function"><name>RTSSender_impl</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1RTSSender__impl_1a7348920a384236d31b6eb89df89b07b8" kind="function"><name>~RTSSender_impl</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1RTSSender__impl_1a82f8ba93dab87b25cc63afda6dc0a728" kind="function"><name>forecast</name></member>
+    <member refid="classgr_1_1lora__rts__cts_1_1RTSSender__impl_1acaf2a0fb0ed82682c9d8db60a39e0ba9" kind="function"><name>general_work</name></member>
+  </compound>
+  <compound refid="namespacegr" kind="namespace"><name>gr</name>
+  </compound>
+  <compound refid="namespacegr_1_1lora__rts__cts" kind="namespace"><name>gr::lora_rts_cts</name>
+    <member refid="namespacegr_1_1lora__rts__cts_1ac7f7b4cbdfecbb7beb7c1b11cc8d820d" kind="enum"><name>cad_state_t</name></member>
+    <member refid="namespacegr_1_1lora__rts__cts_1ac7f7b4cbdfecbb7beb7c1b11cc8d820da6490c27c052a08fe0177127b72cfcdd5" kind="enumvalue"><name>S_CAD_RESET</name></member>
+    <member refid="namespacegr_1_1lora__rts__cts_1ac7f7b4cbdfecbb7beb7c1b11cc8d820daf67f7019e412392e364c21137317157f" kind="enumvalue"><name>S_CAD_DETECT</name></member>
+    <member refid="namespacegr_1_1lora__rts__cts_1ac7f7b4cbdfecbb7beb7c1b11cc8d820dafccdd0625d715f68a56bfb42f912a39e" kind="enumvalue"><name>S_CAD_OUT</name></member>
+    <member refid="namespacegr_1_1lora__rts__cts_1a60e7fdf6a950f1e7604ba2e4da863393" kind="function"><name>trans_bis</name></member>
+    <member refid="namespacegr_1_1lora__rts__cts_1adcc894f43ef4e4c6857cd4ebcb85d649" kind="function"><name>fft_complex_excute</name></member>
+  </compound>
+  <compound refid="namespacestd" kind="namespace"><name>std</name>
+  </compound>
+  <compound refid="api_8h" kind="file"><name>api.h</name>
+    <member refid="api_8h_1a81fdcdce7b344898c5962d1dafbf8a09" kind="define"><name>LORA_RTS_CTS_API</name></member>
+  </compound>
+  <compound refid="cadDetect_8h" kind="file"><name>cadDetect.h</name>
+  </compound>
+  <compound refid="cadDetect__impl_8h" kind="file"><name>cadDetect_impl.h</name>
+  </compound>
+  <compound refid="CTSSender_8h" kind="file"><name>CTSSender.h</name>
+  </compound>
+  <compound refid="CTSSender__impl_8h" kind="file"><name>CTSSender_impl.h</name>
+  </compound>
+  <compound refid="group__defs_8dox" kind="file"><name>group_defs.dox</name>
+  </compound>
+  <compound refid="main__page_8dox" kind="file"><name>main_page.dox</name>
+  </compound>
+  <compound refid="RTSSender_8h" kind="file"><name>RTSSender.h</name>
+  </compound>
+  <compound refid="RTSSender__impl_8h" kind="file"><name>RTSSender_impl.h</name>
+  </compound>
+  <compound refid="utils_8h" kind="file"><name>utils.h</name>
+  </compound>
+  <compound refid="group__block" kind="group"><name>block</name>
+  </compound>
+  <compound refid="dir_d44c64559bbebec7f509842c48db8b23" kind="dir"><name>include</name>
+  </compound>
+  <compound refid="dir_97aefd0d527b934f1d99a682da8fe6a9" kind="dir"><name>lib</name>
+  </compound>
+  <compound refid="dir_447afc6fd6d82d305df78737329d406a" kind="dir"><name>lora_rts_cts</name>
+  </compound>
+  <compound refid="indexpage" kind="page"><name>index</name>
+  </compound>
+</doxygenindex>

@@ -1,0 +1,11 @@
+id: lora_rts_cts_RTSSender
+label: RTSSender
+category: '[Lora_rts_cts]'
+templates:
+  imports: import lora_rts_cts
+  make: lora_rts_cts.RTSSender()
+inputs:
+- label: in
+  domain: stream
+  dtype: complex
+file_format: 1

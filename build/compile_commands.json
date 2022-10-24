@@ -1,0 +1,27 @@
+[
+{
+  "directory": "/home/zjhao/gr-lora_rts_cts/build/lib",
+  "command": "/usr/bin/c++  -DFFTW3F_THREADS -DGR_CTRLPORT -Dgnuradio_lora_rts_cts_EXPORTS -I/home/zjhao/gr-lora_rts_cts/lib/../include -isystem /usr/local/include  -O3 -DNDEBUG -fPIC   -fvisibility=hidden -fvisibility=hidden -std=c++11 -Wall -Wextra -std=gnu++11 -o CMakeFiles/gnuradio-lora_rts_cts.dir/RTSSender_impl.cc.o -c /home/zjhao/gr-lora_rts_cts/lib/RTSSender_impl.cc",
+  "file": "/home/zjhao/gr-lora_rts_cts/lib/RTSSender_impl.cc"
+},
+{
+  "directory": "/home/zjhao/gr-lora_rts_cts/build/lib",
+  "command": "/usr/bin/c++  -DFFTW3F_THREADS -DGR_CTRLPORT -Dgnuradio_lora_rts_cts_EXPORTS -I/home/zjhao/gr-lora_rts_cts/lib/../include -isystem /usr/local/include  -O3 -DNDEBUG -fPIC   -fvisibility=hidden -fvisibility=hidden -std=c++11 -Wall -Wextra -std=gnu++11 -o CMakeFiles/gnuradio-lora_rts_cts.dir/CTSSender_impl.cc.o -c /home/zjhao/gr-lora_rts_cts/lib/CTSSender_impl.cc",
+  "file": "/home/zjhao/gr-lora_rts_cts/lib/CTSSender_impl.cc"
+},
+{
+  "directory": "/home/zjhao/gr-lora_rts_cts/build/lib",
+  "command": "/usr/bin/c++  -DFFTW3F_THREADS -DGR_CTRLPORT -Dgnuradio_lora_rts_cts_EXPORTS -I/home/zjhao/gr-lora_rts_cts/lib/../include -isystem /usr/local/include  -O3 -DNDEBUG -fPIC   -fvisibility=hidden -fvisibility=hidden -std=c++11 -Wall -Wextra -std=gnu++11 -o CMakeFiles/gnuradio-lora_rts_cts.dir/cadDetect_impl.cc.o -c /home/zjhao/gr-lora_rts_cts/lib/cadDetect_impl.cc",
+  "file": "/home/zjhao/gr-lora_rts_cts/lib/cadDetect_impl.cc"
+},
+{
+  "directory": "/home/zjhao/gr-lora_rts_cts/build/swig",
+  "command": "/usr/bin/c++  -DFFTW3F_THREADS -DGR_CTRLPORT -Dlora_rts_cts_swig_EXPORTS -I/home/zjhao/gr-lora_rts_cts/build/swig -I/home/zjhao/gr-lora_rts_cts/swig -I/usr/local/include/gnuradio/swig -isystem /usr/include/python3.6m -isystem /usr/local/include -I/home/zjhao/gr-lora_rts_cts/lib/../include  -O3 -DNDEBUG -fPIC   -fvisibility=hidden -fvisibility=hidden -std=c++11 -Wall -Wextra -std=gnu++11 -o CMakeFiles/lora_rts_cts_swig.dir/CMakeFiles/lora_rts_cts_swig.dir/lora_rts_cts_swigPYTHON_wrap.cxx.o -c /home/zjhao/gr-lora_rts_cts/build/swig/CMakeFiles/lora_rts_cts_swig.dir/lora_rts_cts_swigPYTHON_wrap.cxx",
+  "file": "/home/zjhao/gr-lora_rts_cts/build/swig/CMakeFiles/lora_rts_cts_swig.dir/lora_rts_cts_swigPYTHON_wrap.cxx"
+},
+{
+  "directory": "/home/zjhao/gr-lora_rts_cts/build/swig",
+  "command": "/usr/bin/c++    -O3 -DNDEBUG   -fvisibility=hidden -fvisibility=hidden -std=c++11 -Wall -Wextra -std=gnu++11 -o CMakeFiles/_lora_rts_cts_swig_doc_tag.dir/_lora_rts_cts_swig_doc_tag.cpp.o -c /home/zjhao/gr-lora_rts_cts/build/swig/_lora_rts_cts_swig_doc_tag.cpp",
+  "file": "/home/zjhao/gr-lora_rts_cts/build/swig/_lora_rts_cts_swig_doc_tag.cpp"
+}
+]

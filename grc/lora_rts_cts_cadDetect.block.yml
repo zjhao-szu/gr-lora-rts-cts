@@ -1,0 +1,24 @@
+id: lora_rts_cts_cadDetect
+label: cadDetect
+category: '[Lora_rts_cts]'
+templates:
+  imports: import lora_rts_cts
+  make: lora_rts_cts.cadDetect(${sf}, ${sampRate}, ${bw})
+parameters:
+- id: sf
+  label: Sf
+  dtype: raw
+- id: sampRate
+  label: Samprate
+  dtype: raw
+- id: bw
+  label: Bw
+  dtype: raw
+inputs:
+- label: in
+  domain: stream
+  dtype: complex
+outputs:
+- domain: message
+  id: CADSDR
+file_format: 1

@@ -1,0 +1,7 @@
+/*!
+ * \defgroup block GNU Radio LORA_RTS_CTS C++ Signal Processing Blocks
+ * \brief All C++ blocks that can be used from the LORA_RTS_CTS GNU Radio
+ *        module are listed here or in the subcategories below.
+ *
+ */
+

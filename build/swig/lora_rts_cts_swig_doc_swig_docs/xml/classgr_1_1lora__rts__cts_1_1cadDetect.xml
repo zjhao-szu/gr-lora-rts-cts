@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="classgr_1_1lora__rts__cts_1_1cadDetect" kind="class" language="C++" prot="public">
+    <compoundname>gr::lora_rts_cts::cadDetect</compoundname>
+    <basecompoundref prot="public" virt="virtual">block</basecompoundref>
+    <includes refid="cadDetect_8h" local="no">cadDetect.h</includes>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classgr_1_1lora__rts__cts_1_1cadDetect_1aa32a989b759c31a2449f951d337c018f" prot="public" static="no">
+        <type>boost::shared_ptr&lt; <ref refid="classgr_1_1lora__rts__cts_1_1cadDetect" kindref="compound">cadDetect</ref> &gt;</type>
+        <definition>typedef boost::shared_ptr&lt;cadDetect&gt; gr::lora_rts_cts::cadDetect::sptr</definition>
+        <argsstring></argsstring>
+        <name>sptr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/zjhao/gr-lora_rts_cts/include/lora_rts_cts/cadDetect.h" line="42" column="1" bodyfile="/home/zjhao/gr-lora_rts_cts/include/lora_rts_cts/cadDetect.h" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classgr_1_1lora__rts__cts_1_1cadDetect_1a52ab5f37be7d73dd8d3e101147989ffa" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classgr_1_1lora__rts__cts_1_1cadDetect_1aa32a989b759c31a2449f951d337c018f" kindref="member">sptr</ref></type>
+        <definition>static sptr gr::lora_rts_cts::cadDetect::make</definition>
+        <argsstring>(uint8_t sf, uint32_t sampRate, uint32_t bw)</argsstring>
+        <name>make</name>
+        <param>
+          <type>uint8_t</type>
+          <declname>sf</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>sampRate</declname>
+        </param>
+        <param>
+          <type>uint32_t</type>
+          <declname>bw</declname>
+        </param>
+        <briefdescription>
+<para>Return a shared_ptr to a new instance of <ref refid="classgr_1_1lora__rts__cts_1_1cadDetect" kindref="compound">lora_rts_cts::cadDetect</ref>. </para>        </briefdescription>
+        <detaileddescription>
+<para>To avoid accidental use of raw pointers, <ref refid="classgr_1_1lora__rts__cts_1_1cadDetect" kindref="compound">lora_rts_cts::cadDetect</ref>&apos;s constructor is in a private implementation class. <ref refid="classgr_1_1lora__rts__cts_1_1cadDetect_1a52ab5f37be7d73dd8d3e101147989ffa" kindref="member">lora_rts_cts::cadDetect::make</ref> is the public interface for creating new instances. </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/zjhao/gr-lora_rts_cts/include/lora_rts_cts/cadDetect.h" line="52" column="1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>&lt;+description of block+&gt; </para>    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="0">
+        <label>gr::lora_rts_cts::cadDetect</label>
+        <link refid="classgr_1_1lora__rts__cts_1_1cadDetect"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>gr::block</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>gr::lora_rts_cts::cadDetect</label>
+        <link refid="classgr_1_1lora__rts__cts_1_1cadDetect"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>gr::block</label>
+      </node>
+    </collaborationgraph>
+    <location file="/home/zjhao/gr-lora_rts_cts/include/lora_rts_cts/cadDetect.h" line="40" column="1" bodyfile="/home/zjhao/gr-lora_rts_cts/include/lora_rts_cts/cadDetect.h" bodystart="39" bodyend="53"/>
+    <listofallmembers>
+      <member refid="classgr_1_1lora__rts__cts_1_1cadDetect_1a52ab5f37be7d73dd8d3e101147989ffa" prot="public" virt="non-virtual"><scope>gr::lora_rts_cts::cadDetect</scope><name>make</name></member>
+      <member refid="classgr_1_1lora__rts__cts_1_1cadDetect_1aa32a989b759c31a2449f951d337c018f" prot="public" virt="non-virtual"><scope>gr::lora_rts_cts::cadDetect</scope><name>sptr</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

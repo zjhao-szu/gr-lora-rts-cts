@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.8.13">
+  <compounddef id="cadDetect__impl_8h" kind="file" language="C++">
+    <compoundname>cadDetect_impl.h</compoundname>
+    <includes refid="cadDetect_8h" local="no">lora_rts_cts/cadDetect.h</includes>
+    <includes local="no">iostream</includes>
+    <includes local="no">gnuradio/fft/api.h</includes>
+    <includes local="no">gnuradio/fft/fft.h</includes>
+    <includes local="no">gnuradio/gr_complex.h</includes>
+    <includes local="no">gnuradio/fft/fft_vcc.h</includes>
+    <includes local="no">gnuradio/fft/fft_vfc.h</includes>
+    <includes local="no">volk/volk.h</includes>
+    <includes local="no">vector</includes>
+    <includes local="no">cmath</includes>
+    <includes local="no">cstdlib</includes>
+    <includes local="no">queue</includes>
+    <includes local="no">complex</includes>
+    <includes local="no">fstream</includes>
+    <incdepgraph>
+      <node id="30">
+        <label>queue</label>
+      </node>
+      <node id="26">
+        <label>volk/volk.h</label>
+      </node>
+      <node id="16">
+        <label>lora_rts_cts/cadDetect.h</label>
+        <link refid="cadDetect_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>cmath</label>
+      </node>
+      <node id="25">
+        <label>gnuradio/fft/fft_vfc.h</label>
+      </node>
+      <node id="18">
+        <label>gnuradio/attributes.h</label>
+      </node>
+      <node id="21">
+        <label>gnuradio/fft/api.h</label>
+      </node>
+      <node id="32">
+        <label>fstream</label>
+      </node>
+      <node id="24">
+        <label>gnuradio/fft/fft_vcc.h</label>
+      </node>
+      <node id="15">
+        <label>cadDetect_impl.h</label>
+        <link refid="cadDetect__impl_8h"/>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>vector</label>
+      </node>
+      <node id="22">
+        <label>gnuradio/fft/fft.h</label>
+      </node>
+      <node id="23">
+        <label>gnuradio/gr_complex.h</label>
+      </node>
+      <node id="19">
+        <label>gnuradio/block.h</label>
+      </node>
+      <node id="29">
+        <label>cstdlib</label>
+      </node>
+      <node id="20">
+        <label>iostream</label>
+      </node>
+      <node id="17">
+        <label>lora_rts_cts/api.h</label>
+        <link refid="api_8h"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>complex</label>
+      </node>
+    </incdepgraph>
+    <innerclass refid="classgr_1_1lora__rts__cts_1_1cadDetect__impl" prot="public">gr::lora_rts_cts::cadDetect_impl</innerclass>
+    <innernamespace refid="namespacegr">gr</innernamespace>
+    <innernamespace refid="namespacegr_1_1lora__rts__cts">gr::lora_rts_cts</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/zjhao/gr-lora_rts_cts/lib/cadDetect_impl.h"/>
+  </compounddef>
+</doxygen>

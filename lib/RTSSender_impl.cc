@@ -23,8 +23,11 @@
 #endif
 
 #include <gnuradio/io_signature.h>
-
 #include "RTSSender_impl.h"
+
+#define SEND_MODULE SEND_MODULE_PACKET
+#define SEND_MODULE_PACKET 0
+#define SEND_MODULE_RTS 1
 
 namespace gr {
   namespace lora_rts_cts {
@@ -47,13 +50,18 @@ namespace gr {
     {
 		//注册并添加端口
 		m_receive_userdata_port = pmt::mp("UserDataIn");
+		m_receiveLoRaDecodeMessage = pmt::mp("DecodeMessage");
 		m_out_userdata = pmt::mp("UserDataOut");
 		m_out_RTS = pmt::mp("RTSOUT");
 
+		message_port_register_in(m_receiveLoRaDecodeMessage);
 		message_port_register_in(m_receive_userdata_port);
 		message_port_register_out(m_out_userdata);
-
+		message_port_register_out(m_out_RTS);
+		
+		set_msg_handler(m_receiveLoRaDecodeMessage,boost::bind(&RTSSender_impl::receiveDecodeMessage,this,_1));
 		set_msg_handler(m_receive_userdata_port,boost::bind(&RTSSender_impl::receiveUserData,this,_1));
+		
 		m_state = S_RTS_RESET;
 
 		//初始化普通需要参数
@@ -86,37 +94,58 @@ namespace gr {
     
 	}
 
-	void
-	RTSSender_impl::receiveUserData(pmt::pmt_t msg){
-		std::cout<<pmt::symbol_to_string(msg)<<std::endl;
-		strs.push(pmt::symbol_to_string(msg));
-		m_state =  S_RTS_CAD;
-	}
+
+
     void
     RTSSender_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
     {
       /* <+forecast+> e.g. ninput_items_required[0] = noutput_items */
 	  ninput_items_required[0] = noutput_items * m_samples_per_symbol;
     }
+	/********************************************************************
+	 * 接收用户需要发送的数据包
+	 * 
+	********************************************************************/
+	void
+	RTSSender_impl::receiveUserData(pmt::pmt_t msg){
+		std::cout<<pmt::symbol_to_string(msg)<<std::endl;
+		strs.push(pmt::symbol_to_string(msg));
+		m_state =  S_RTS_CAD;
+	}
+	
+	void
+	RTSSender_impl::receiveDecodeMessage(pmt::pmt_t msg){
+		//only state is receiving, resolve the message
+		if(m_state == S_RTS_RECEIVE1 || m_state == S_RTS_RECEIVE2 || m_state == S_RTS_RECEIVE_Slot || m_state == S_RTS_RECEIVE_CLass_C){
+			std::string str = pmt::symbol_to_string(msg);
+			std::cout<<str<<std::endl;
+			if(str.find("RTS",0) != std::string::npos){
+				int indexID = str.find("NodeID",0);
+				int indexColon = str.find(":",indexID);
+				int indexComma = str.find(",",indexID);
+				int winNodeID = std::stoi(str.substr(indexcolon+1,indexComma));
+				if(winNodeID == m_nodeId){
+					m_state = S_RTS_Send_Data;
+				}else if(m_state == S_RTS_RECEIVE1 && winNodeID != m_nodeId){
+					m_state = S_RTS_TO_RECEIVE2;
+				}else if(m_state == S_RTS_RECEIVE2 && winNodeID != m_nodeId){
+					m_state = S_RTS_SLEEP;
+				}
+			}else{
+				//doing other work
+				messageDebugPrint(msg);
+			};
+		}
+    }
 
+	/********************************************************************
+	 * CAD功能检测
+	 * 
+	********************************************************************/
 	uint32_t 
     RTSSender_impl::argmax(float * fft_result,float * max_value){
         float mag = abs(fft_result[0]);
-        float max_val = mag;
-        uint32_t max_index = 0;
-        for(int i = 0; i < m_number_of_bins;i++){
-            mag = abs(fft_result[i]);
-            if(mag > max_val){
-                max_index = i;
-                max_val = mag;
-            }
-        }
-        *max_value = max_val;
-        return max_index;
-    }
-
-	uint32_t 
-    RTSSender_impl::searchFFTPeek(const lv_32fc_t *fft_result,float * max_value,float * fft_res_mag){
+        float max_val at * fft_res_mag){
         volk_32fc_magnitude_32f(fft_res_mag, fft_result, m_fft_size);
         uint32_t max_idx = argmax(fft_res_mag, max_value);
         return max_idx;
@@ -140,6 +169,62 @@ namespace gr {
         }
         return count > 0 ? false : true;
     };
+	/********************************************************************
+	 * 发送RTS数据包-基于不同的发送方式
+	 * 
+	********************************************************************/
+	void
+	RTSSender_impl::sendRTSByPacket(){
+		uint32_t totalLen = 0;
+		for(int i =0;i < n;i++){
+			totalLen += strs[i].length();
+		}
+		std:string msg = "Type:RTS,ID:"+ m_nodeId + ",duration:"+ totalLen;
+		pmt::pmt_t msg = pmt::string_to_symbol(msg);
+		message_port_pub(m_out_userdata,msg);
+	}
+	//TODO.....
+	void
+	RTSSender_impl::sendRTSBySerialization(){
+		
+	}
+	/********************************************************************
+	 * Debug模式
+	 * 
+	********************************************************************/
+	void
+	RTSSender_impl::messageDebugPrint(const pmt::pmt_t &msg){
+		std::stringstream sout;
+		if (pmt::is_pdu(msg)){
+			const auto& meta = pmt::car(msg);
+			const auto& vector = pmt::cdr(msg);
+
+
+			sout << "***** PDU DEBUG PRINT *****"<<std::endl
+				 << pmt::write_string(meta) << std::endl;
+			size_t len = pmt::blob_length(vector);
+			sout << "pdu length = " << len << " bytes" << std::endl
+                 << "pdu vector contents = " << std::endl;
+            size_t offset(0);
+            const uint8_t* d =
+                (const uint8_t*)pmt::uniform_vector_elements(vector, offset);
+            for (size_t i = 0; i < len; i += 16) {
+                sout << std::hex << std::setw(4) << std::setfill('0')
+                     << static_cast<unsigned int>(i) << ": ";
+                for (size_t j = i; j < std::min(i + 16, len); j++) {
+                    sout << std::hex << std::setw(2) << std::setfill('0')
+                         << static_cast<unsigned int>(d[j]) << " ";
+                }
+                sout << std::endl;
+            }
+		}  else {
+        	sout << "******* MESSAGE DEBUG PRINT ********" << std::endl
+             << pmt::write_string(msg) << std::endl;
+		}
+
+		sout << "************************************" << std::endl;
+		std::cout << sout.str();
+	}
 
     int
     RTSSender_impl::general_work (int noutput_items,
@@ -161,6 +246,9 @@ namespace gr {
 				while(!strs.empty()){
 					strs.pop();
 				}
+				m_argmaxHistory.clear();
+				m_cad_count = 5;
+				m_cad_detect = false;
 				break;
 			}
 			case S_RTS_RECEIVE_DATA:{
@@ -189,8 +277,8 @@ namespace gr {
 				if(m_argmaxHistory.size() > REQUIRE_PREAMBLE_NUMBER){
 					m_argmaxHistory.pop_back();
 				}
+				
 				if(m_argmaxHistory.size() >= REQUIRE_PREAMBLE_NUMBER){
-
 					m_cad_detect = CADDetect_MinBin();
 					//todo
 					//两种方案 
@@ -199,31 +287,43 @@ namespace gr {
 					//一种是不连续 清空历史记录
 					m_argmaxHistory.clear();
 					m_cad_count -= 1;
-					
 				}
+				
 				if(m_cad_detect){
-					m_state = S_RTS_RESET;
+					//SLEEP 会等待二进制退避算法结束休眠
+					//reset 则会重置缓冲区的数据，但是我们还没发送数据，所以这里状态不能切换至reset状态
+					m_state = S_RTS_SLEEP;
 				}
+				
 				if(m_cad_count == 0 && m_cad_detect==false){
 					m_state = S_RTS_send_RTS;
 				}
 				break;
 			}
-			// case S_RTS_RESET:{
-			// 	break;
-			// }
-			// case S_RTS_RESET:{
-			// 	break;
-			// }
-			// case S_RTS_RESET:{
-			// 	break;
-			// }
-			// case S_RTS_RESET:{
-			// 	break;
-			// }
-			// case S_RTS_RESET:{
-			// 	break;
-			// }
+			case S_RTS_send_RTS:{
+				#if SEND_MODULE == SEND_MODULE_PACKET
+					sendRTSByPacket();
+				else //TODO
+					sendRTSBySerialization();
+				#endif
+				break;
+			}
+			case S_RTS_SLEEP:{
+				boost::this_thread::sleep(boost::posix_time::microseconds(static_cast<long>(m_before_receive1_ms)));
+				break;
+			}
+			case S_RTS_RECEIVE1:{
+				
+				 
+				break;
+			}
+			case S_RTS_RECEIVE2:{
+				
+				break;
+			}
+			case S_RTS_Send_Data:{
+				break;
+			}
 			// case S_RTS_RESET:{
 			// 	break;
 			// }

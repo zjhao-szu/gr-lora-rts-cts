@@ -37,9 +37,10 @@ namespace gr {
 		pmt::pmt_t m_receive_userdata_port; 
 		pmt::pmt_t m_out_userdata;
 		pmt::pmt_t m_out_RTS;
+		pmt::pmt_t m_receiveLoRaDecodeMessage;
 
 		//存储当前用户要发送的数据
-		std::queue<std::string> strs;
+		std::vector<std::string> m_userDatas;
 		void receiveUserData(pmt::pmt_t msg);
 		
 		//普通且非功能性数据定义
@@ -54,6 +55,9 @@ namespace gr {
 	
 		std::vector<gr_complex> m_upchirp,m_downchirp;
 
+		uint32_t m_nodeId;
+		uint32_t m_duration;
+
 		//CAD功能
 		uint32_t m_preamble_drift_max;
 		gr::fft::fft_complex * m_fft;
@@ -66,13 +70,33 @@ namespace gr {
 		uint32_t searchFFTPeek(const lv_32fc_t * fft_result,float * max_value,float * fft_res_mag);
 		bool CADDetect_MinBin();
 
+		//发送RTS，基于两种模式
+		void receiveDecodeMessage();
+		//模式一：RTS、CTS利用数据包发送
+		void sendRTSByPacket();
+		//模式二：RTS/CTS序列化发送
+		void sendRTSBySerialization();
+		
 		//休眠
-		uint32_t sleepTime;
+		uint32_t m_period__ms;
+
+		uint32_t m_before_receive1_ms;
+		uint32_t m_receiveCount;
+		
+		uint32_t m_before_receive2_ms;
 		//模拟class A
 
 		//模拟class B
 
 		//模拟class C
+
+
+		//发送数据
+		bool m_SendTotalData;
+		void sendData();
+		void sendTotalData();
+		//debug
+		void  messageDebugPrint(const pmt::pmt_t &msg);
 
 
     public:

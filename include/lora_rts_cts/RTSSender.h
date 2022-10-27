@@ -34,9 +34,13 @@ namespace gr {
 		S_RTS_WAIT_CTS,
 		S_RTS_send_RTS,
 		S_RTS_SLEEP,
+    S_RTS_TO_RECEIVE1,
 		S_RTS_RECEIVE1,
+    S_RTS_TO_RECEIVE2,
 		S_RTS_RECEIVE2,
 		S_RTS_Send_Data,
+    S_RTS_RECEIVE_Slot,
+    S_RTS_RECEIVE_CLass_C,
 		S_RTS_BEACON
 	};
     /*!

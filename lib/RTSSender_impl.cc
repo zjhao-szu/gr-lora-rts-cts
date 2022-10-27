@@ -28,22 +28,31 @@
 #define SEND_MODULE SEND_MODULE_PACKET
 #define SEND_MODULE_PACKET 0
 #define SEND_MODULE_RTS 1
-
+#define REQUIRE_PREAMBLE_NUMBER 8
 namespace gr {
   namespace lora_rts_cts {
 
     RTSSender::sptr
-    RTSSender::make()
+    RTSSender::make(uint32_t sf,uint32_t bw,uint32_t classType,uint32_t NodeId)
     {
       return gnuradio::get_initial_sptr
-        (new RTSSender_impl());
+        (new RTSSender_impl(sf,bw,classType,NodeId));
     }
 
 
     /*
      * The private constructor
      */
-    RTSSender_impl::RTSSender_impl()
+	/**
+	 * TODO:: 
+	 * params:: 
+	 * sf --
+	 * bw --
+	 * ClassType --
+	 * NodeId --
+	 * 
+	*/
+    RTSSender_impl::RTSSender_impl(uint32_t sf,uint32_t bw,uint32_t classType,uint32_t NodeId)
       : gr::block("RTSSender",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
               gr::io_signature::make(0, 0, 0))
@@ -109,7 +118,7 @@ namespace gr {
 	void
 	RTSSender_impl::receiveUserData(pmt::pmt_t msg){
 		std::cout<<pmt::symbol_to_string(msg)<<std::endl;
-		strs.push(pmt::symbol_to_string(msg));
+		m_userDatas.push_back(pmt::symbol_to_string(msg));
 		m_state =  S_RTS_CAD;
 	}
 	
@@ -123,7 +132,7 @@ namespace gr {
 				int indexID = str.find("NodeID",0);
 				int indexColon = str.find(":",indexID);
 				int indexComma = str.find(",",indexID);
-				int winNodeID = std::stoi(str.substr(indexcolon+1,indexComma));
+				int winNodeID = std::stoi(str.substr(indexColon+1,indexComma));
 				if(winNodeID == m_nodeId){
 					m_state = S_RTS_Send_Data;
 				}else if(m_state == S_RTS_RECEIVE1 && winNodeID != m_nodeId){
@@ -145,7 +154,20 @@ namespace gr {
 	uint32_t 
     RTSSender_impl::argmax(float * fft_result,float * max_value){
         float mag = abs(fft_result[0]);
-        float max_val at * fft_res_mag){
+        float max_val = mag;
+        uint32_t max_index = 0;
+        for(int i = 0; i < m_number_of_bins;i++){
+            mag = abs(fft_result[i]);
+            if(mag > max_val){
+                max_index = i;
+                max_val = mag;
+            }
+        }
+        *max_value = max_val;
+        return max_index;
+    }
+ 	uint32_t 
+    RTSSender_impl::searchFFTPeek(const gr_complex *fft_result,float * max_value,float * fft_res_mag){
         volk_32fc_magnitude_32f(fft_res_mag, fft_result, m_fft_size);
         uint32_t max_idx = argmax(fft_res_mag, max_value);
         return max_idx;
@@ -176,11 +198,11 @@ namespace gr {
 	void
 	RTSSender_impl::sendRTSByPacket(){
 		uint32_t totalLen = 0;
-		for(int i =0;i < n;i++){
-			totalLen += strs[i].length();
+		for(int i = 0;i < m_userDatas.size();i++){
+			totalLen += m_userDatas[i].length();
 		}
-		std:string msg = "Type:RTS,ID:"+ m_nodeId + ",duration:"+ totalLen;
-		pmt::pmt_t msg = pmt::string_to_symbol(msg);
+		std::string msgString("Type:RTS,ID:" + std::to_string(m_nodeId) + " ,duration: " + std::to_string(totalLen));
+		pmt::pmt_t msg = pmt::string_to_symbol(msgString);
 		message_port_pub(m_out_userdata,msg);
 	}
 	//TODO.....
@@ -238,24 +260,24 @@ namespace gr {
         uint32_t maxIndex = 0;
         float maxValue = 0;
 
-		
+		if(m_classType == M_RTS_CLASSB){
+			//compute left how much time about next slot;
+		}
 		
 		switch (m_state)
 		{
-			case S_RTS_RESET:{
-				while(!strs.empty()){
-					strs.pop();
-				}
+			case S_RTS_RESET: {
+				m_userDatas.clear();
 				m_argmaxHistory.clear();
 				m_cad_count = 5;
 				m_cad_detect = false;
 				break;
 			}
-			case S_RTS_RECEIVE_DATA:{
+			case S_RTS_RECEIVE_DATA: {
 				//接收用户数据并切换rts-cad状态
 				break;
 			}
-			case S_RTS_CAD:{
+			case S_RTS_CAD: {
 				gr_complex * signalBlockBuffer =  (gr_complex *) volk_malloc(m_fft_size * sizeof(gr_complex),volk_get_alignment());
 				gr_complex * outbuf =  (gr_complex *) volk_malloc(m_fft_size * sizeof(gr_complex),volk_get_alignment());
 				float * fft_res_mag = (float*)volk_malloc(m_fft_size*sizeof(float), volk_get_alignment());
@@ -300,28 +322,34 @@ namespace gr {
 				}
 				break;
 			}
-			case S_RTS_send_RTS:{
+			case S_RTS_send_RTS: {
 				#if SEND_MODULE == SEND_MODULE_PACKET
 					sendRTSByPacket();
-				else //TODO
+				#else //TODO
 					sendRTSBySerialization();
 				#endif
 				break;
 			}
-			case S_RTS_SLEEP:{
+			case S_RTS_SLEEP: {
 				boost::this_thread::sleep(boost::posix_time::microseconds(static_cast<long>(m_before_receive1_ms)));
 				break;
 			}
-			case S_RTS_RECEIVE1:{
+			case S_RTS_RECEIVE1: {
 				
-				 
+				
 				break;
 			}
-			case S_RTS_RECEIVE2:{
+			case S_RTS_RECEIVE2: {
+				
+				break;
+			}
+			case S_RTS_RECEIVE_Slot: {
+				
 				
 				break;
 			}
 			case S_RTS_Send_Data:{
+				
 				break;
 			}
 			// case S_RTS_RESET:{

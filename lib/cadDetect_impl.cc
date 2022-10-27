@@ -121,7 +121,7 @@ namespace gr {
     }
 
     uint32_t 
-    cadDetect_impl::searchFFTPeek(const lv_32fc_t *fft_result,float * max_value,float * fft_res_mag){
+    cadDetect_impl::searchFFTPeek(const gr_complex *fft_result,float * max_value,float * fft_res_mag){
         volk_32fc_magnitude_32f(fft_res_mag, fft_result, m_fft_size);
         uint32_t max_idx = argmax(fft_res_mag, max_value);
         return max_idx;

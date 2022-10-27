@@ -3,16 +3,37 @@ label: RTSSender
 category: '[Lora_rts_cts]'
 templates:
   imports: import lora_rts_cts
-  make: lora_rts_cts.RTSSender()
+  make: lora_rts_cts.RTSSender(${sf}, ${bw}, ${classType}, ${NodeId})
+parameters:
+- id: sf
+  label: Sf
+  dtype: raw
+- id: bw
+  label: Bw
+  dtype: raw
+- id: classType
+  label: Classtype
+  dtype: raw
+- id: NodeId
+  label: Nodeid
+  dtype: raw
 inputs:
 - label: in
   domain: stream
   dtype: complex
-- domain: message
+
+- label: dataIn
+  domain: message
   id: UserDataIn
+- label: decodeMessage
+  domain: message
+  dtype: message
+  id: DecodeMessage
 outputs:
-- domain: message
-  id: RTSOUT
-- domain: message
+- label: dataout
+  domain: message
   id: UserDataOut
+- label: rtsout
+  domain: message
+  id: RTSOUT
 file_format: 1

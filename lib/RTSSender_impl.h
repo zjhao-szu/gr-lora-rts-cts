@@ -23,10 +23,12 @@
 
 #include <lora_rts_cts/RTSSender.h>
 #include <gnuradio/fft/fft.h>
+#include <volk/volk.h>
 #include <vector>
 #include <string>
 #include <queue>
 namespace gr {
+
   namespace lora_rts_cts {
 
     class RTSSender_impl : public RTSSender
@@ -57,11 +59,14 @@ namespace gr {
 
 		uint32_t m_nodeId;
 		uint32_t m_duration;
+		Class_Type m_classType;
+		
 
 		//CAD功能
 		uint32_t m_preamble_drift_max;
 		gr::fft::fft_complex * m_fft;
 		std::vector<uint32_t>  m_argmaxHistory;
+		uint32_t m_samples_per_symbol;
 		int m_cad_count; //cad检测次数，超过上限结束转入发送RTS
 		bool m_cad_detect;
 		bool detectCad();
@@ -84,6 +89,7 @@ namespace gr {
 		uint32_t m_receiveCount;
 		
 		uint32_t m_before_receive2_ms;
+		void receiveDecodeMessage(pmt::pmt_t msg); 
 		//模拟class A
 
 		//模拟class B
@@ -100,7 +106,7 @@ namespace gr {
 
 
     public:
-      RTSSender_impl();
+      RTSSender_impl(uint32_t sf,uint32_t bw,uint32_t classType,uint32_t NodeId);
       ~RTSSender_impl();
 
       // Where all the action really happens

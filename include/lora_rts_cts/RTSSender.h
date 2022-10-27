@@ -26,23 +26,28 @@
 
 namespace gr {
   namespace lora_rts_cts {
-	enum RTS_Sender_State{
-		S_RTS_RESET,
-		S_RTS_RECEIVE_DATA,
-		S_RTS_CAD,
-		S_RTS_WAIT_DATA,
-		S_RTS_WAIT_CTS,
-		S_RTS_send_RTS,
-		S_RTS_SLEEP,
-    S_RTS_TO_RECEIVE1,
-		S_RTS_RECEIVE1,
-    S_RTS_TO_RECEIVE2,
-		S_RTS_RECEIVE2,
-		S_RTS_Send_Data,
-    S_RTS_RECEIVE_Slot,
-    S_RTS_RECEIVE_CLass_C,
-		S_RTS_BEACON
-	};
+    enum RTS_Sender_State{
+      S_RTS_RESET,
+      S_RTS_RECEIVE_DATA,
+      S_RTS_CAD,
+      S_RTS_WAIT_DATA,
+      S_RTS_WAIT_CTS,
+      S_RTS_send_RTS,
+      S_RTS_SLEEP,
+      S_RTS_TO_RECEIVE1,
+      S_RTS_RECEIVE1,
+      S_RTS_TO_RECEIVE2,
+      S_RTS_RECEIVE2,
+      S_RTS_Send_Data,
+      S_RTS_RECEIVE_Slot,
+      S_RTS_RECEIVE_CLass_C,
+      S_RTS_BEACON
+    };
+    enum Class_Type{
+      M_RTS_CLASSA,
+      M_RTS_CLASSB,
+      M_RTS_CLASSC
+    };
     /*!
      * \brief <+description of block+>
      * \ingroup lora_rts_cts
@@ -61,7 +66,7 @@ namespace gr {
        * class. lora_rts_cts::RTSSender::make is the public interface for
        * creating new instances.
        */
-      static sptr make();
+      static sptr make(uint32_t sf,uint32_t bw,uint32_t classType,uint32_t NodeId);
     };
 
   } // namespace lora_rts_cts

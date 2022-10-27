@@ -56,7 +56,7 @@ namespace gr {
 
       std::vector<uint32_t> m_argmaxHistory;
       bool CADDetect_MinBin();
-      uint32_t searchFFTPeek(const lv_32fc_t *fft_result,float * max_value,float * fft_res_mag);
+      uint32_t searchFFTPeek(const gr_complex *fft_result,float * max_value,float * fft_res_mag);
       uint32_t argmax(float * fft_result,float * max_value);
       unsigned int pmod(int x,unsigned int n);
       unsigned int m_preamble_drift_max; 

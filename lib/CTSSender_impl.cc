@@ -39,14 +39,28 @@ namespace gr {
     /*
      * The private constructor
      */
-    CTSSender_impl::CTSSender_impl()
+    CTSSender_impl::CTSSender_impl(uint32_t sf,uint32_t bw,uint32_t sampRate)
       : gr::block("CTSSender",
               gr::io_signature::make(1,1, sizeof(gr_complex)),
               gr::io_signature::make(0, 0, 0))
     {
-      m_fft_size = 1024;
-      m_fft = new fft::fft_complex(m_fft_size,true,1);
+      //自动机状态切换
       m_state  = S_CTS_Reset;
+      //port选择
+      m_receive_data_port = pmt::mp("receiveData");
+      m_receive_RTS_port = pmt::mp("receiveRTS");
+      m_out_data_port = pmt::mp("OutData");
+      m_out_CTS_port = pmt::mp("OutCTS");
+
+      message_port_register_in(m_receive_data_port);
+      message_port_register_in(m_receive_RTS_port);
+      message_port_register_out(m_out_data_port);
+      message_port_register_out(m_out_CTS_port);
+
+      set_msg_handler(m_receive_data_port,boost::bind(&CTSSender_impl::receiveDataSolve,this,_1));
+      set_msg_handler(m_receive_RTS_port,boost::bind(&CTSSender_impl::receiveRTSSolve,this,_1));
+      
+
 
     }
 
@@ -56,6 +70,27 @@ namespace gr {
     CTSSender_impl::~CTSSender_impl()
     {
     }
+    /***********************************************************************
+     *  该部分接口用于处理接收端口传入的数据-包括RTS数据包 以及 用户 
+     * 
+     ***********************************************************************/
+    void
+    CTSSender_impl::receiveRTSSolve(pmt::pmt_t msg){ //根据接收模块接收的数据打印数据
+
+    }
+    void
+    CTSSender_impl::receiveDataSolve(){ //根据USRP模块接收的信号，就地解析数据
+
+    }
+
+
+    /**
+     * @brief 
+     * 
+     * @param noutput_items 
+     * @param ninput_items_required 
+     */
+
 
     void
     CTSSender_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)

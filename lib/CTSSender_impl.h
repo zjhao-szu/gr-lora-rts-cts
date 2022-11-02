@@ -23,33 +23,51 @@
 
 #include <lora_rts_cts/CTSSender.h>
 #include <gnuradio/fft/fft.h>
+#include <volk/volk.h>
+#include <vector>
+#include <string>
+#include <queue>
+
 namespace gr {
   namespace lora_rts_cts {
 
     class CTSSender_impl : public CTSSender
     {
      private:
-      // Nothing to declare in this block.
+      //CTS 状态机接口
+      CTS_Sender_State m_state;
+      //模块数据出入接口
+      pmt::pmt_t m_receive_data_port;
+      pmt::pmt_t m_receive_RTS_port; 
+      pmt::pmt_t m_out_data_port;
+      pmt::pmt_t m_out_CTS_port;
+   
+
+      //处理信号fft
       gr::fft::fft_complex  * m_fft;
       uint32_t m_fft_size;
-      CTS_Sender_State m_state;
 
-
-      //普通且非功能性数据定义
+      //lora 必要特征：sf、采样率、带宽
       uint32_t m_sf;
       uint32_t m_sampRate;
       uint32_t m_bw;
       uint32_t m_oversample_rate;
 
       uint32_t m_number_of_bins;
-      uint32_t m_samp_pre_symbol;
-      uint32_t m_fft_size;
+      uint32_t m_samp_pre_symbol
+
+
 
       std::vector<gr_complex> m_upchirp,m_downchirp;
       std::vector<pair<int,int>> m_nodeIds;
       uint32_t m_nodeId;
       uint32_t m_duration;
-      // Class_Type m_classType;
+
+      void receiveDataSolve();
+      void receiveRTSSolve();
+      
+
+      
      public:
       CTSSender_impl();
       ~CTSSender_impl();

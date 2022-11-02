@@ -32,6 +32,24 @@ namespace gr {
       // Nothing to declare in this block.
       gr::fft::fft_complex  * m_fft;
       uint32_t m_fft_size;
+      CTS_Sender_State m_state;
+
+
+      //普通且非功能性数据定义
+      uint32_t m_sf;
+      uint32_t m_sampRate;
+      uint32_t m_bw;
+      uint32_t m_oversample_rate;
+
+      uint32_t m_number_of_bins;
+      uint32_t m_samp_pre_symbol;
+      uint32_t m_fft_size;
+
+      std::vector<gr_complex> m_upchirp,m_downchirp;
+      std::vector<pair<int,int>> m_nodeIds;
+      uint32_t m_nodeId;
+      uint32_t m_duration;
+      // Class_Type m_classType;
      public:
       CTSSender_impl();
       ~CTSSender_impl();

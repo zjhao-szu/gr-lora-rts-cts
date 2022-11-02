@@ -92,6 +92,14 @@ namespace gr {
 		//初始化CAD功能
 		m_cad_count = 5;
 		m_cad_detect = false;
+
+		//class A\B\C windows params;
+		//class A
+		m_receive1_window_count = 1000;
+		m_receive2_window_count = 1000;
+		//class B
+		m_slotReceive_window_count = 1000;
+		
 	}
 
 	
@@ -262,6 +270,10 @@ namespace gr {
 
 		if(m_classType == M_RTS_CLASSB){
 			//compute left how much time about next slot;
+			m_slotReceive_window_count--;
+			if(m_slotReceive_window_count == 0){
+				m_state = S_RTS_RECEIVE_Slot;
+			}
 		}
 		
 		switch (m_state)
@@ -271,6 +283,9 @@ namespace gr {
 				m_argmaxHistory.clear();
 				m_cad_count = 5;
 				m_cad_detect = false;
+				m_receive1_window_count = 1000;
+				m_receive2_window_count = 1000;
+				m_slotReceive_window_count = 1000;
 				break;
 			}
 			case S_RTS_RECEIVE_DATA: {
@@ -334,22 +349,35 @@ namespace gr {
 				boost::this_thread::sleep(boost::posix_time::microseconds(static_cast<long>(m_before_receive1_ms)));
 				break;
 			}
+			//class A window 1
 			case S_RTS_RECEIVE1: {
-				
-				
+				m_receive1_window_count--;
+				if(m_receive1_window_count == 0){
+					m_state = m_before_receive2_ms;
+				}
 				break;
 			}
+			
+			//class A window 2
 			case S_RTS_RECEIVE2: {
-				
+				m_receive2_window_count--;
+				if(m_receive2_window_count == 0){
+					m_state = S_RTS_RESET;
+				}	
 				break;
 			}
+			//class B slot window
 			case S_RTS_RECEIVE_Slot: {
 				
+				break;
+			}
+			//class C window Open all
+			case S_RTS_RECEIVE_CLass_C:{
 				
 				break;
 			}
 			case S_RTS_Send_Data:{
-				
+
 				break;
 			}
 			// case S_RTS_RESET:{

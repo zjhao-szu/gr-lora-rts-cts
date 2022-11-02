@@ -91,11 +91,12 @@ namespace gr {
 		uint32_t m_before_receive2_ms;
 		void receiveDecodeMessage(pmt::pmt_t msg); 
 		//模拟class A
-
+		uint32_t m_receive1_window_count;
+		uint32_t m_receive2_window_count;
 		//模拟class B
-
+		uint32_t m_slotReceive_window_count;
 		//模拟class C
-
+		
 
 		//发送数据
 		bool m_SendTotalData;

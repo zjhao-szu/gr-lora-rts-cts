@@ -29,10 +29,10 @@ namespace gr {
   namespace lora_rts_cts {
 
     CTSSender::sptr
-    CTSSender::make()
+    CTSSender::make(uint32_t sf,uint32_t bw,uint32_t sampRate)
     {
       return gnuradio::get_initial_sptr
-        (new CTSSender_impl());
+        (new CTSSender_impl(sf,bw,sampRate));
     }
 
 
@@ -44,8 +44,10 @@ namespace gr {
               gr::io_signature::make(1,1, sizeof(gr_complex)),
               gr::io_signature::make(0, 0, 0))
     {
-       m_fft_size = 1024;
-       m_fft = new fft::fft_complex(m_fft_size,true,1);
+      m_fft_size = 1024;
+      m_fft = new fft::fft_complex(m_fft_size,true,1);
+      m_state  = S_CTS_Reset;
+
     }
 
     /*
@@ -59,6 +61,7 @@ namespace gr {
     CTSSender_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
     {
       /* <+forecast+> e.g. ninput_items_required[0] = noutput_items */
+      ninput_items_required[0] = noutput_items * m_samples_per_symbol;
     }
 
     int
@@ -69,6 +72,8 @@ namespace gr {
     {
       const gr_complex *in = (const gr_complex *) input_items[0];
       unsigned int *out = (unsigned int *) output_items[0];
+      
+
 
       // Do <+signal processing+>
       // Tell runtime system how many input items we consumed on

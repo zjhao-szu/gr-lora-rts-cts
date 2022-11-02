@@ -26,6 +26,13 @@
 
 namespace gr {
   namespace lora_rts_cts {
+    enum CTS_Sender_State{
+      S_CTS_Reset,
+      S_CTS_Receive,
+      S_CTS_Send_Data,
+      S_CTS_Send_CTS,
+      S_CTS_Beacon
+    };
     /*!
      * \brief <+description of block+>
      * \ingroup lora_rts_cts

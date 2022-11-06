@@ -41,35 +41,37 @@ namespace gr {
       pmt::pmt_t m_receive_RTS_port; 
       pmt::pmt_t m_out_data_port;
       pmt::pmt_t m_out_CTS_port;
-   
-
-      //处理信号fft
-      gr::fft::fft_complex  * m_fft;
-      uint32_t m_fft_size;
 
       //lora 必要特征：sf、采样率、带宽
       uint32_t m_sf;
       uint32_t m_sampRate;
       uint32_t m_bw;
-      uint32_t m_oversample_rate;
 
-      uint32_t m_number_of_bins;
-      uint32_t m_samp_pre_symbol
+      //网关状态---是否正在接收数据
+      bool m_isconnected;
+      int m_waitTime; //缓冲窗口，用于延迟作用
+      int m_NodeIdConnected;
+      int m_durationConnected;
+      Class_Type m_classType;
 
+      //每个slot之间的时间间隔
+      uint32_t m_slotIntervalTime;
 
+      //beacon 同步时间
+      bool m_start; //判断是不是首次启动，首次启动需要立马发送beacon如果是B类的话
+      std::string beaconMsg;
+      uint32_t m_beaconIntervalTime;
+      
+      // std::vector<pair<int,int>> m_nodeIds; //ID和duration的结合 
+      std::queue<pair<int,int>> m_nodeIdDurations; //
 
-      std::vector<gr_complex> m_upchirp,m_downchirp;
-      std::vector<pair<int,int>> m_nodeIds;
-      uint32_t m_nodeId;
-      uint32_t m_duration;
-
-      void receiveDataSolve();
+      void receiveDataSolve(pmt::pmt_t msg);
       void receiveRTSSolve();
       
-
       
+
      public:
-      CTSSender_impl();
+      CTSSender_impl(uint32_t sf,uint32_t bw,uint32_t sampRate,Class_Type class);
       ~CTSSender_impl();
 
       // Where all the action really happens

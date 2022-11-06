@@ -26,11 +26,18 @@
 
 namespace gr {
   namespace lora_rts_cts {
+    enum Class_Type{
+      CTS_ClassA,
+      CTS_ClassB,
+      CTS_ClassC
+    };
     enum CTS_Sender_State{
       S_CTS_Reset,
       S_CTS_Receive,
       S_CTS_Send_Data,
-      S_CTS_Send_CTS,
+      S_CTS_Send_CTS_ClassA,
+      S_CTS_Send_CTS_ClassB,
+      S_CTS_Send_CTS_ClassC,
       S_CTS_Beacon
     };
     /*!
@@ -51,7 +58,7 @@ namespace gr {
        * class. lora_rts_cts::CTSSender::make is the public interface for
        * creating new instances.
        */
-      static sptr make(uint32_t sf,uint32_t bw,uint32_t sampRate);
+      static sptr make(uint32_t sf,uint32_t bw,uint32_t sampRate,Class_Type class);
     };
 
   } // namespace lora_rts_cts

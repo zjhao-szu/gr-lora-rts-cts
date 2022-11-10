@@ -29,6 +29,9 @@
 #define SEND_MODULE_PACKET 0
 #define SEND_MODULE_RTS 1
 #define REQUIRE_PREAMBLE_NUMBER 8
+#define BEFORE_RECEIVE2
+#define BEFORE_RECEIVE1
+#define RECEIVE_WINDOW_COUNT
 namespace gr {
   namespace lora_rts_cts {
 
@@ -127,6 +130,7 @@ namespace gr {
 	RTSSender_impl::receiveUserData(pmt::pmt_t msg){
 		std::cout<<pmt::symbol_to_string(msg)<<std::endl;
 		m_userDatas.push_back(pmt::symbol_to_string(msg));
+		std::cout<<"检测到用户输入：："<<m_userDatas.back()<<std::endl;
 		m_state =  S_RTS_CAD;
 	}
 	
@@ -212,6 +216,7 @@ namespace gr {
 		std::string msgString("Type:RTS,ID:" + std::to_string(m_nodeId) + " ,duration: " + std::to_string(totalLen));
 		pmt::pmt_t msg = pmt::string_to_symbol(msgString);
 		message_port_pub(m_out_userdata,msg);
+		std::cout<<"RTS packet 发送结束"<<std::endl;
 	}
 	//TODO.....
 	void
@@ -290,9 +295,11 @@ namespace gr {
 			}
 			case S_RTS_RECEIVE_DATA: {
 				//接收用户数据并切换rts-cad状态
+				std::cout<<"等待用户传入数据......"<<std::endl;
 				break;
 			}
 			case S_RTS_CAD: {
+				
 				gr_complex * signalBlockBuffer =  (gr_complex *) volk_malloc(m_fft_size * sizeof(gr_complex),volk_get_alignment());
 				gr_complex * outbuf =  (gr_complex *) volk_malloc(m_fft_size * sizeof(gr_complex),volk_get_alignment());
 				float * fft_res_mag = (float*)volk_malloc(m_fft_size*sizeof(float), volk_get_alignment());
@@ -317,7 +324,8 @@ namespace gr {
 				
 				if(m_argmaxHistory.size() >= REQUIRE_PREAMBLE_NUMBER){
 					m_cad_detect = CADDetect_MinBin();
-					//todo
+					std::cout<<"正在进行CAD检测,剩余CAD检测次数为: "<<m_cad_count<<std::endl;
+					//TODO
 					//两种方案 
 					//一种是连续，只删除一个
 					//如果采用第一种方案的方式，只需要将下面代码注释就可以
@@ -327,12 +335,15 @@ namespace gr {
 				}
 				
 				if(m_cad_detect){
+					std::cout<<"CAD DETECTED!!!! Node Need to Sleep!!!!"<<std::endl;
 					//SLEEP 会等待二进制退避算法结束休眠
 					//reset 则会重置缓冲区的数据，但是我们还没发送数据，所以这里状态不能切换至reset状态
 					m_state = S_RTS_SLEEP;
 				}
 				
-				if(m_cad_count == 0 && m_cad_detect==false){
+				if(m_cad_count == 0 && m_cad_detect == false){
+					std::cout<<"==============CAD Detect count is 0 && 没有CAD 被检测============"<<std::endl;
+					std::cout<<"==============进入发送RTS阶段===================================="<<std::endl;
 					m_state = S_RTS_send_RTS;
 				}
 				break;
@@ -340,28 +351,51 @@ namespace gr {
 			case S_RTS_send_RTS: {
 				#if SEND_MODULE == SEND_MODULE_PACKET
 					sendRTSByPacket();
+				
 				#else //TODO
 					sendRTSBySerialization();
 				#endif
+				m_before_receive1_ms = 100;
 				break;
 			}
 			case S_RTS_SLEEP: {
 				boost::this_thread::sleep(boost::posix_time::microseconds(static_cast<long>(m_before_receive1_ms)));
 				break;
 			}
-			//class A window 1
-			case S_RTS_RECEIVE1: {
-				m_receive1_window_count--;
-				if(m_receive1_window_count == 0){
-					m_state = m_before_receive2_ms;
+			case S_RTS_TO_RECEIVE1:{
+				
+				m_before_receive1_ms--;
+				if(m_before_receive1_ms == 0){
+					std::cout<<"正在打开接收窗口1"<<std::endl;
+					m_state = S_RTS_RECEIVE1;
 				}
 				break;
 			}
-			
+			//class A window 1
+			case S_RTS_RECEIVE1: {
+				m_receive1_window_count--;
+				std::cout<<"正在等待数据传入。。。。"<<std::endl;
+				if(m_receive1_window_count == 0){
+					std::cout<<"接收数据结束..进入等待第二窗口打开"<<std::endl;
+					m_state = S_RTS_TO_RECEIVE2;
+					m_before_receive2_ms = 100; 
+				}
+				break;
+			}
+			case S_RTS_TO_RECEIVE2:{
+				m_before_receive2_ms--;
+				if(m_before_receive2_ms == 0){
+					std::cout<<"正在打开接收窗口2"<<std::endl;
+					m_state = S_RTS_RECEIVE2;
+				}
+				break;
+			}
 			//class A window 2
 			case S_RTS_RECEIVE2: {
 				m_receive2_window_count--;
+				std::cout<<"正在等待数据传入。。。。"<<std::endl;
 				if(m_receive2_window_count == 0){
+					std::cout<<"接收数据结束..重置参数，等待用户传输数据"<<std::endl;
 					m_state = S_RTS_RESET;
 				}	
 				break;

@@ -272,7 +272,7 @@ namespace gr {
         //发送beacon
         std::string message = "type:Beacon,IntervalTime:"+to_string(m_beaconIntervalTime)+",slotTime:"+to_string(m_slotIntervalTime);
         pmt::pmt_t msgpmt = pmt::string_to_symbol(message);
-        message_port_pub(pmtmsg);
+        message_port_pub(msgpmt);
         m_state = S_CTS_Receive;
         m_beaconIntervalTime = BEACONINTERVALTIME;
         break;

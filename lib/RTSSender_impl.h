@@ -26,6 +26,7 @@
 #include <volk/volk.h>
 #include <vector>
 #include <string>
+#include <unordered_map>
 #include <queue>
 namespace gr {
 
@@ -57,10 +58,13 @@ namespace gr {
 	
 		std::vector<gr_complex> m_upchirp,m_downchirp;
 
+		Class_Type m_classType;
 		uint32_t m_nodeId;
 		uint32_t m_duration;
-		Class_Type m_classType;
 		
+		//接收NodeID、Duation
+		uint32_t m_ReceiveNodeId;
+		uint32_t m_ReceiveDuration;
 
 		//CAD功能
 		uint32_t m_preamble_drift_max;
@@ -82,19 +86,26 @@ namespace gr {
 		//模式二：RTS/CTS序列化发送
 		void sendRTSBySerialization();
 		
+
 		//休眠
 		uint32_t m_period__ms;
-
 		uint32_t m_before_receive1_ms;
 		uint32_t m_receiveCount;
-		
 		uint32_t m_before_receive2_ms;
-		void receiveDecodeMessage(pmt::pmt_t msg); 
+		
+		void receiveDecodeMessage(pmt::pmt_t msg);  
+		std::unordered_map<string,string> parseMessage(std::string msgString);
+		
 		//模拟class A
 		uint32_t m_receive1_window_count;
 		uint32_t m_receive2_window_count;
+		
+		
 		//模拟class B
+		bool m_firstSendBeacon;
 		uint32_t m_slotReceive_window_count;
+		uint32_t m_beacon_Interval_Window;
+		
 		//模拟class C
 		
 
@@ -102,6 +113,7 @@ namespace gr {
 		bool m_SendTotalData;
 		void sendData();
 		void sendTotalData();
+
 		//debug
 		void  messageDebugPrint(const pmt::pmt_t &msg);
 

@@ -30,7 +30,7 @@
 #define SEND_MODULE_RTS 1
 #define REQUIRE_PREAMBLE_NUMBER 8
 #define BEFORE_RECEIVE2
-#define BEFORE_RECEIVE1
+#define BEFORE_RECEIVE1 
 #define RECEIVE_WINDOW_COUNT
 namespace gr {
   namespace lora_rts_cts {
@@ -97,7 +97,10 @@ namespace gr {
 		m_cad_detect = false;
 
 		//class A\B\C windows params;
+
 		//class A
+		m_before_receive1_ms = 100;
+		m_before_receive2_ms = 100;
 		m_receive1_window_count = 1000;
 		m_receive2_window_count = 1000;
 		//class B
@@ -128,34 +131,86 @@ namespace gr {
 	********************************************************************/
 	void
 	RTSSender_impl::receiveUserData(pmt::pmt_t msg){
-		std::cout<<pmt::symbol_to_string(msg)<<std::endl;
-		m_userDatas.push_back(pmt::symbol_to_string(msg));
-		std::cout<<"检测到用户输入：："<<m_userDatas.back()<<std::endl;
-		m_state =  S_RTS_CAD;
+		// if(m_state == S_RTS_RECEIVE_DATA || m_state == S_RTS_RECEIVE_Class_C){
+			std::cout<<pmt::symbol_to_string(msg)<<std::endl;
+			m_userDatas.push_back(pmt::symbol_to_string(msg));
+			std::cout<<"检测到用户输入：："<<m_userDatas.back()<<std::endl;
+			if(m_state == S_RTS_RECEIVE_DATA || m_state == S_RTS_RECEIVE_Class_C){
+				std::cout<<"当前状态为静默状态,可以直接发送信息,状态切换为CAD状态!!"<<std::endl;
+				m_state =  S_RTS_CAD;
+			}else{
+				std::cout<<"当前状态为忙碌状态，缓存需要发送的信息，状态不进行切换!!!"<<std::endl;
+			} 			
+		// }
+		
 	}
-	
+
+	std::unordered_map<string,string>
+	RTSSender_impl::parseMessage(std::string msgString){
+		std::unordered_map<string,string> map;
+		int indexColon = str.find(":");
+		int indexComma = str.find(",");
+		std::string type = str.substr(indexColon+1,indexComma);
+		map.emplace("Type",type);
+		if(type == "Beacon"){
+			indexColon = str.find(":",indexComma);
+			indexComma = str.find(",",indexColon);
+			string beaconIntervalTime = str.substr(indexColon+1,indexComma);
+			map.emplace("IntervalTime",beaconIntervalTime);
+			indexColon = str.find(":",indexComma);
+			string slotTime = str.substr(indexColon+1,str.length() - indexColon - 1);
+			map.emplace("slotTime",slotTime);
+		}else if(type == "RTS" || type == "CTS"){
+			indexColon = str.find(":",indexComma);
+			indexComma = str.find(",",indexColon);
+			string beaconIntervalTime = str.substr(indexColon+1,indexComma);
+			map.emplace("NodeId",beaconIntervalTime);
+			indexColon = str.find(":",indexComma);
+			string slotTime = str.substr(indexColon+1,str.length() - indexColon - 1);
+			map.emplace("Duration",slotTime);
+		}
+		return map;
+	}
 	void
 	RTSSender_impl::receiveDecodeMessage(pmt::pmt_t msg){
 		//only state is receiving, resolve the message
 		if(m_state == S_RTS_RECEIVE1 || m_state == S_RTS_RECEIVE2 || m_state == S_RTS_RECEIVE_Slot || m_state == S_RTS_RECEIVE_CLass_C){
 			std::string str = pmt::symbol_to_string(msg);
-			std::cout<<str<<std::endl;
-			if(str.find("RTS",0) != std::string::npos){
-				int indexID = str.find("NodeID",0);
-				int indexColon = str.find(":",indexID);
-				int indexComma = str.find(",",indexID);
-				int winNodeID = std::stoi(str.substr(indexColon+1,indexComma));
-				if(winNodeID == m_nodeId){
-					m_state = S_RTS_Send_Data;
-				}else if(m_state == S_RTS_RECEIVE1 && winNodeID != m_nodeId){
-					m_state = S_RTS_TO_RECEIVE2;
-				}else if(m_state == S_RTS_RECEIVE2 && winNodeID != m_nodeId){
-					m_state = S_RTS_SLEEP;
-				}
-			}else{
-				//doing other work
+			if(str.find("Type") == std::string::npos){
 				messageDebugPrint(msg);
-			};
+			}else{
+				std::cout<<str<<std::endl;
+				std::unordered_map<string,string> mesMap = parseMessage(str);
+				if(mesMap["Type"] == "CTS"){
+					m_ReceiveNodeId = std::stoi(mesMap["NodeId"]);	
+					m_ReceiveDuration = std::stoi(mesMap["Duration"]);
+					std::cout<<"NodeID:"<<m_nodeId<<" receive CTS数据包!!!"<<<<std::endl;
+					std::cout<<"Receive winNode ID is"<<m_receiveNodeID<<" Duration:"<<m_ReceiveDuration<<std::endl;
+					if(m_ReceiveNodeId == m_nodeId){
+						cout<<"m_NodeId: "<<m_nodeId<<" 收到CTS数据包并且该节点为获胜节点!!!"<<std::endl;
+						m_state = S_RTS_Send_Data;
+					}else if(m_ReceiveNodeId != m_nodeId){
+						cout<<"m_NodeId: "<<m_nodeId<<" 收到CTS数据包,获胜节点为: "<<m_ReceiveNodeId<<std::endl;
+						m_state = S_RTS_SLEEP;
+					}
+				}else if(mesMap["Type"] == "RTS"){
+					m_ReceiveNodeId = std::stoi(mesMap["NodeId"]);	
+					m_ReceiveDuration = std::stoi(mesMap["Duration"]);
+					std::cout<<"NodeID:"<<m_nodeId<<" receive RTS数据包!!!"<<<<std::endl;
+					std::cout<<"Receive winNode ID is "<<m_receiveNodeID<<" Duration: "<<m_ReceiveDuration<<std::endl;
+					if(m_ReceiveNodeId == m_nodeId){
+						cout<<"m_NodeId: "<<m_nodeId<<" 收到自身RTS,放弃ing!!!"<<std::endl;
+					}else if(m_ReceiveNodeId != m_nodeId){
+						cout<<"m_NodeId: "<<m_nodeId<<" 收到RTS数据包,通信节点为: "<<m_ReceiveNodeId<<std::endl;
+						m_state = S_RTS_SLEEP;
+					}
+				}else if(mesMap["Type"]  == "Beacon" ){
+					m_beacon_Interval_Window = std::stoi(mesMap["IntervalTime"]);
+					m_slotReceive_Count = std::stoi(mesMap["slotTime"]);
+				}else{
+					messageDebugPrint(msg);
+				}
+			} 
 		}
     }
 
@@ -209,11 +264,11 @@ namespace gr {
 	********************************************************************/
 	void
 	RTSSender_impl::sendRTSByPacket(){
-		uint32_t totalLen = 0;
+		int totalLen = 0;
 		for(int i = 0;i < m_userDatas.size();i++){
 			totalLen += m_userDatas[i].length();
 		}
-		std::string msgString("Type:RTS,ID:" + std::to_string(m_nodeId) + " ,duration: " + std::to_string(totalLen));
+		std::string msgString("Type:RTS,NodeId:" + std::to_string(m_nodeId) + ",Duration:" + std::to_string(totalLen));
 		pmt::pmt_t msg = pmt::string_to_symbol(msgString);
 		message_port_pub(m_out_userdata,msg);
 		std::cout<<"RTS packet 发送结束"<<std::endl;
@@ -221,6 +276,27 @@ namespace gr {
 	//TODO.....
 	void
 	RTSSender_impl::sendRTSBySerialization(){
+		
+	}
+	/*******************************************************************
+	 * 发送数据
+	********************************************************************/
+	void
+	RTSSender_impl::sendTotalData(){
+		std::cout<<"开始发送数据"<<std::endl;
+		int totalLen  = 0;
+		//这里是每一条消息都有一个数据包发送，其实也可以合并所有的数据包一起发送
+		//两种方案后续都可以考虑
+		for(auto & data : m_userDatas){
+			std::cout<<"message is :"<<data<<std::endl;
+			totalLen += data.length();
+			pmt::pmt_t datamsg = pmt::string_to_symbol(data);
+			message_port_pub(m_out_userdata,datamsg);
+		}
+		std::cout<<"全部数据发送完全，总共发送数据: "<<totalLen<<" 个字符数据"<<std::endl;
+	}
+	void 
+	RTSSender_impl::sendData(){
 		
 	}
 	/********************************************************************
@@ -272,14 +348,20 @@ namespace gr {
 		unsigned int num_consumed = m_samples_per_symbol;
         uint32_t maxIndex = 0;
         float maxValue = 0;
-
-		if(m_classType == M_RTS_CLASSB){
+	
+		if(m_classType == M_RTS_CLASSB && m_beacon_Interval_Window > 0 ){
+			m_beacon_Interval_Window--;
+			if(m_beacon_Interval_Window == 0){
+				m_state = S_RTS_Beacon;
+			}
+		}else if(m_classType == M_RTS_CLASSB && m_slotReceive_window_count > 0){
 			//compute left how much time about next slot;
 			m_slotReceive_window_count--;
 			if(m_slotReceive_window_count == 0){
 				m_state = S_RTS_RECEIVE_Slot;
-			}
+			} 
 		}
+		
 		
 		switch (m_state)
 		{
@@ -291,6 +373,7 @@ namespace gr {
 				m_receive1_window_count = 1000;
 				m_receive2_window_count = 1000;
 				m_slotReceive_window_count = 1000;
+				m_state = S_RTS_RECEIVE_DATA;
 				break;
 			}
 			case S_RTS_RECEIVE_DATA: {
@@ -356,6 +439,12 @@ namespace gr {
 					sendRTSBySerialization();
 				#endif
 				m_before_receive1_ms = 100;
+				if(m_classType == M_RTS_CLASSC){
+					m_state = S_RTS_RECEIVE_CLass_C;
+				}else{
+					m_state = S_RTS_RECEIVE1;
+				}
+				
 				break;
 			}
 			case S_RTS_SLEEP: {
@@ -363,10 +452,10 @@ namespace gr {
 				break;
 			}
 			case S_RTS_TO_RECEIVE1:{
-				
+
 				m_before_receive1_ms--;
 				if(m_before_receive1_ms == 0){
-					std::cout<<"正在打开接收窗口1"<<std::endl;
+					std::cout<<"正在打开接收窗口...... Before_receive"<<m_before_receive1_ms<<std::endl;
 					m_state = S_RTS_RECEIVE1;
 				}
 				break;
@@ -395,29 +484,36 @@ namespace gr {
 				m_receive2_window_count--;
 				std::cout<<"正在等待数据传入。。。。"<<std::endl;
 				if(m_receive2_window_count == 0){
-					std::cout<<"接收数据结束..重置参数，等待用户传输数据"<<std::endl;
+					std::cout<<"接收数据结束..重置参数，等待用户传输数据......"<<std::endl;
 					m_state = S_RTS_RESET;
 				}	
 				break;
 			}
 			//class B slot window
 			case S_RTS_RECEIVE_Slot: {
-				
+				m_slotReceive_Count--;
+				if(m_slotReceive_Count == 0){
+					std::cout<<"class B slot,接收窗口减一......"<<std::endl;
+					m_state = S_RTS_RESET;
+				}
 				break;
 			}
 			//class C window Open all
-			case S_RTS_RECEIVE_CLass_C:{
+			case S_RTS_RECEIVE_Class_C:{
 				
 				break;
 			}
 			case S_RTS_Send_Data:{
-
+				sendTotalData();
+				m_state = S_RTS_RESET;
 				break;
 			}
-			// case S_RTS_RESET:{
-			// 	break;
-			// }
+			case S_RTS_BEACON:{
+				
+				break;
+			}
 			default:
+
 				break;
 		}
 	

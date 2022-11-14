@@ -66,7 +66,7 @@ namespace gr {
       std::queue<pair<int,int>> m_nodeIdDurations; //
 
       void receiveDataSolve(pmt::pmt_t msg);
-      void receiveRTSSolve();
+      void receiveRTSSolve(pmt::pmt_t msg);
       
       
 

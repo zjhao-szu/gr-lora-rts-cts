@@ -92,6 +92,7 @@ namespace gr {
      ***********************************************************************/
     void
     CTSSender_impl::receiveRTSSolve(const pmt::pmt_t msg){ //根据接收模块接收的数据打印数据
+      if(m_state != S_CTS_Receive) return;
       std::string str = pmt::symbol_to_string(msg);
       //message 格式：“Type:RTS,NodeID:10,duration:1000”
       if(str.find("RTS") != std::string::npos){
@@ -119,8 +120,9 @@ namespace gr {
       }
     }
     void
-    CTSSender_impl::receiveDataSolve(){ //根据USRP模块接收的信号，就地解析数据
+    CTSSender_impl::receiveDataSolve(pmt::pmt_t msg){ //根据USRP模块接收的信号，就地解析数据
       //do nothing
+      std::cout<<pmt::symbol_to_string(msg)<<std::endl;
     }
 
 
@@ -153,7 +155,7 @@ namespace gr {
       }else if(m_classType == CTS_ClassB && !m_start && m_beaconIntervalTime == 0){
         //到达beacon发送时间，发送beacon
         m_state = S_CTS_Beacon;
-      }
+      }else if(m_classType == CTS_ClassB && !m_start && m_slotInrervalTime == 0)
       if(m_classType == CTS_ClassB ){
         --m_beaconIntervalTime;
         --m_slotIntervalTime;
@@ -165,6 +167,8 @@ namespace gr {
           m_state = S_CTS_Send_CTS_ClassB;
         }
       }
+      //会预留一段时间m_waitTime
+      //如果没连上
       if(m_isconnected){
         if(m_waitTime <= 0){
           m_durationConnected--;
@@ -185,8 +189,9 @@ namespace gr {
         }
         m_state = S_CTS_Receive;
         m_durationConnected = -1;
-        m_waitTime = 10;
+        m_waitTime = 10; //
         m_NodeIdConnected = -1;
+        m_isconnected = false;
         break;
       }
 
@@ -230,7 +235,7 @@ namespace gr {
              //竞争策略选择 先来先服务
             int winNodeId = m_nodeIdDurations.front().first;
             int winDuration = m_nodeIdDurations.front().second;
-            std::string message = "type:CTS,NodeId:"+to_string(winNodeId)+"Duration:"+to_string(winDuration);
+            std::string message = "type:CTS,NodeId:"+to_string(winNodeId)+",Duration:"+to_string(winDuration);
             pmt::pmt_t pmtmsg = pmt::string_to_symbol(message);
             message_port_pub(pmtmsg);
           }
@@ -240,7 +245,7 @@ namespace gr {
             m_nodeIdDurations.pop();
           }
         } else{
-          m_slotIntervalTime--;
+          m_state = S_CTS_Receive;
         }
 
         break;
@@ -262,7 +267,7 @@ namespace gr {
           winDuration = m_nodeIdDurations.front().second;
         }
         //class A采用先来先服务策略
-        message = "type:CTS,NodeId:"+to_string(winNodeId)+"Duration:"+to_string(winDuration);
+        message = "Type:CTS,NodeId:"+to_string(winNodeId)+",Duration:"+to_string(winDuration);
         pmt::pmt_t pmtmsg = pmt::string_to_symbol(message);
         message_port_pub(pmtmsg);
         m_state = S_CTS_Receive;
@@ -270,7 +275,7 @@ namespace gr {
       }
       case S_CTS_Beacon:{
         //发送beacon
-        std::string message = "type:Beacon,IntervalTime:"+to_string(m_beaconIntervalTime)+",slotTime:"+to_string(m_slotIntervalTime);
+        std::string message = "Type:Beacon,IntervalTime:"+to_string(m_beaconIntervalTime)+",slotTime:"+to_string(m_slotIntervalTime);
         pmt::pmt_t msgpmt = pmt::string_to_symbol(message);
         message_port_pub(msgpmt);
         m_state = S_CTS_Receive;

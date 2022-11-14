@@ -40,7 +40,7 @@ namespace gr {
       S_RTS_RECEIVE2,
       S_RTS_Send_Data,
       S_RTS_RECEIVE_Slot,
-      S_RTS_RECEIVE_CLass_C,
+      S_RTS_RECEIVE_Class_C,
       S_RTS_BEACON
     };
     enum Class_Type{

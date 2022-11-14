@@ -105,7 +105,7 @@ namespace gr {
         int indexId = str.find("duration",0);
         int indexColon = str.find(":",indexId);
         int duration = std::stoi(str.substr(indexColon+1));
-
+        std::cout<<"收到来自节点NodeId:"<<winNodeID<<" duration: "<<duration<<std::endl;
         m_nodeIdDurations.push_back(make_pair<int,int>(winNodeID,duration));
         if(m_classType == CTS_ClassA ){
           m_state = S_CTS_Send_CTS_CLassA;
@@ -122,6 +122,7 @@ namespace gr {
     void
     CTSSender_impl::receiveDataSolve(pmt::pmt_t msg){ //根据USRP模块接收的信号，就地解析数据
       //do nothing
+      std::cout<<"接收到了用户信息:"<<std::endl;
       std::cout<<pmt::symbol_to_string(msg)<<std::endl;
     }
 
@@ -149,13 +150,18 @@ namespace gr {
     {
       const gr_complex *in = (const gr_complex *) input_items[0];
       unsigned int *out = (unsigned int *) output_items[0];
+      
       if(m_classType == CTS_ClassB && m_start){ //首次立马发送beacon
         m_state = s_CTS_Beacon;
         m_start = false;
       }else if(m_classType == CTS_ClassB && !m_start && m_beaconIntervalTime == 0){
         //到达beacon发送时间，发送beacon
         m_state = S_CTS_Beacon;
-      }else if(m_classType == CTS_ClassB && !m_start && m_slotInrervalTime == 0)
+      }else if(m_classType == CTS_ClassB && !m_start && m_slotInrervalTime == 0){
+        m_state = S_CTS_Send_CTS_ClassB;
+      }
+
+
       if(m_classType == CTS_ClassB ){
         --m_beaconIntervalTime;
         --m_slotIntervalTime;
@@ -167,6 +173,7 @@ namespace gr {
           m_state = S_CTS_Send_CTS_ClassB;
         }
       }
+
       //会预留一段时间m_waitTime
       //如果没连上
       if(m_isconnected){
@@ -212,14 +219,20 @@ namespace gr {
         int winNodeId = 0;
         int winDuration = 0;
         //当前网关节点是否正在通信，如果是则返回相应的正在沟通的CTS
+        
+        std::cout<<"=====Class A采用先来先服务策略==="<<std::endl;
         if(m_isconnected){
           //可以选择发或者可以选择发送当前链接的节点
           winNodeId = m_NodeIdConnected;
           winDuration = m_durationConnected;
+          std::cout<<"当前网关正在通信,与节点:"<<winNodeId<<" duration:"<<winDuration<<std::endl;
         }else{
           winNodeId = m_nodeIdDurations.front().first;
           winDuration = m_nodeIdDurations.front().second;
+          std::cout<<"当前网关未与人通信,获胜节点为:"<<winNodeId<<" duration:"<<winDuration<<std::endl;
         }
+        
+  
         //class A采用先来先服务策略
         message = "type:CTS,NodeId:"+to_string(winNodeId)+"Duration:"+to_string(winDuration);
         pmt::pmt_t pmtmsg = pmt::string_to_symbol(message);
@@ -233,8 +246,11 @@ namespace gr {
         if(m_slotIntervalTime == 0){
           if(m_nodeIdDurations.size() != 0){
              //竞争策略选择 先来先服务
+             
             int winNodeId = m_nodeIdDurations.front().first;
             int winDuration = m_nodeIdDurations.front().second;
+            std::cout<<"=====Class B采用先来先服务策略==="<<std::endl;
+            std::cout<<"当前网关未与人通信,获胜节点为:"<<winNodeId<<" duration:"<<winDuration<<std::endl;
             std::string message = "type:CTS,NodeId:"+to_string(winNodeId)+",Duration:"+to_string(winDuration);
             pmt::pmt_t pmtmsg = pmt::string_to_symbol(message);
             message_port_pub(pmtmsg);
@@ -273,6 +289,7 @@ namespace gr {
         m_state = S_CTS_Receive;
         break;
       }
+
       case S_CTS_Beacon:{
         //发送beacon
         std::string message = "Type:Beacon,IntervalTime:"+to_string(m_beaconIntervalTime)+",slotTime:"+to_string(m_slotIntervalTime);

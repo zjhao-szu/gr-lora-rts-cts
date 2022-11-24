@@ -32,7 +32,7 @@ namespace gr {
   namespace lora_rts_cts {
 
     CTSSender::sptr
-    CTSSender::make(uint32_t sf,uint32_t bw,uint32_t sampRate,Class_Type classType)
+    CTSSender::make(uint32_t sf,uint32_t bw,uint32_t sampRate,int classType)
     {
       return gnuradio::get_initial_sptr
         (new CTSSender_impl(sf,bw,sampRate,classType));
@@ -42,14 +42,14 @@ namespace gr {
     /*
      * The private constructor
      */
-    CTSSender_impl::CTSSender_impl(uint32_t sf,uint32_t bw,uint32_t sampRate,Class_Type classType)
+    CTSSender_impl::CTSSender_impl(uint32_t sf,uint32_t bw,uint32_t sampRate,int classType)
       : gr::block("CTSSender",
-              gr::io_signature::make(1,1, sizeof(gr_complex)),
+              gr::io_signature::make(0,0, 0),
               gr::io_signature::make(0, 0, 0)),
               m_sf(sf),
               m_bw(bw),
-              m_sampRate(sampRate),
-              m_classType(classType)
+              m_sampRate(sampRate)
+              
     {
       //自动机状态切换
       m_state  = S_CTS_Reset;
@@ -78,6 +78,14 @@ namespace gr {
       m_slotIntervalTime = SLOTINTERVALTIME;
       m_beaconIntervalTime = BEACONINTERVALTIME;
       m_waitTime = 10;
+      
+      if(classType == 0){
+        m_classType = CTS_ClassA;
+      }else if(classType == 1){
+        m_classType = CTS_ClassB;
+      }else if(classType == 2){
+        m_classType = CTS_ClassC;
+      } 
     }
 
     /*
@@ -106,7 +114,7 @@ namespace gr {
         indexColon = str.find(":",indexId);
         int duration = std::stoi(str.substr(indexColon+1));
         std::cout<<"收到来自节点NodeId:"<<winNodeID<<" duration: "<<duration<<std::endl;
-        m_nodeIdDurations.push_back(std::make_pair<int,int>(winNodeID,duration));
+        m_nodeIdDurations.push(std::make_pair(winNodeID,duration));
         if(m_classType == CTS_ClassA ){
           m_state = S_CTS_Send_CTS_ClassA;
         }else if(m_classType == CTS_ClassB){
@@ -139,7 +147,7 @@ namespace gr {
     CTSSender_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
     {
       /* <+forecast+> e.g. ninput_items_required[0] = noutput_items */
-      ninput_items_required[0] = noutput_items * m_samples_per_symbol;
+      ninput_items_required[0] = 0;
     }
 
     int
@@ -234,9 +242,9 @@ namespace gr {
         
   
         //class A采用先来先服务策略
-        message = "type:CTS,NodeId:"+to_string(winNodeId)+"Duration:"+to_string(winDuration);
+        message = "type:CTS,NodeId:"+std::to_string(winNodeId)+"Duration:"+std::to_string(winDuration);
         pmt::pmt_t pmtmsg = pmt::string_to_symbol(message);
-        message_port_pub(pmtmsg);
+        message_port_pub(m_out_data_port,pmtmsg);
         m_state = S_CTS_Receive;
         break;
       }
@@ -251,9 +259,9 @@ namespace gr {
             int winDuration = m_nodeIdDurations.front().second;
             std::cout<<"=====Class B采用先来先服务策略==="<<std::endl;
             std::cout<<"当前网关未与人通信,获胜节点为:"<<winNodeId<<" duration:"<<winDuration<<std::endl;
-            std::string message = "type:CTS,NodeId:"+to_string(winNodeId)+",Duration:"+to_string(winDuration);
+            std::string message = "type:CTS,NodeId:"+std::to_string(winNodeId)+",Duration:"+std::to_string(winDuration);
             pmt::pmt_t pmtmsg = pmt::string_to_symbol(message);
-            message_port_pub(pmtmsg);
+            message_port_pub(m_out_data_port,pmtmsg);
           }
           m_state = S_CTS_Receive;
           m_slotIntervalTime = SLOTINTERVALTIME;
@@ -283,18 +291,18 @@ namespace gr {
           winDuration = m_nodeIdDurations.front().second;
         }
         //class A采用先来先服务策略
-        message = "Type:CTS,NodeId:"+to_string(winNodeId)+",Duration:"+to_string(winDuration);
+        message = "Type:CTS,NodeId:"+std::to_string(winNodeId)+",Duration:"+std::to_string(winDuration);
         pmt::pmt_t pmtmsg = pmt::string_to_symbol(message);
-        message_port_pub(pmtmsg);
+        message_port_pub(m_out_data_port,pmtmsg);
         m_state = S_CTS_Receive;
         break;
       }
 
       case S_CTS_Beacon:{
         //发送beacon
-        std::string message = "Type:Beacon,IntervalTime:"+to_string(m_beaconIntervalTime)+",slotTime:"+to_string(m_slotIntervalTime);
+        std::string message = "Type:Beacon,IntervalTime:"+std::to_string(m_beaconIntervalTime)+",slotTime:"+std::to_string(m_slotIntervalTime);
         pmt::pmt_t msgpmt = pmt::string_to_symbol(message);
-        message_port_pub(msgpmt);
+        message_port_pub(m_out_data_port,msgpmt);
         m_state = S_CTS_Receive;
         m_beaconIntervalTime = BEACONINTERVALTIME;
         break;
@@ -309,10 +317,10 @@ namespace gr {
       // Do <+signal processing+>
       // Tell runtime system how many input items we consumed on
       // each input stream.
-      consume_each (noutput_items);
+      consume_each (0);
 
       // Tell runtime system how many output items we produced.
-      return noutput_items;
+      return 0;
     }
 
   } /* namespace lora_rts_cts */

@@ -43,7 +43,7 @@ namespace gr {
       S_RTS_RECEIVE_Class_C,
       S_RTS_BEACON
     };
-    enum Class_Type{
+    enum RTS_Class_Type{
       M_RTS_CLASSA,
       M_RTS_CLASSB,
       M_RTS_CLASSC
@@ -66,7 +66,7 @@ namespace gr {
        * class. lora_rts_cts::RTSSender::make is the public interface for
        * creating new instances.
        */
-      static sptr make(uint32_t sf,uint32_t bw,uint32_t classType,uint32_t NodeId);
+      static sptr make(uint32_t sf,uint32_t bw,int classType,uint32_t NodeId);
     };
 
   } // namespace lora_rts_cts

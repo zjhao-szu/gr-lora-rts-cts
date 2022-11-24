@@ -59,7 +59,7 @@ namespace gr {
 	
 		std::vector<gr_complex> m_upchirp,m_downchirp;
 
-		Class_Type m_classType;
+		RTS_Class_Type	 m_classType;
 		uint32_t m_nodeId;
 		uint32_t m_duration;
 		
@@ -119,7 +119,7 @@ namespace gr {
 
 
     public:
-      RTSSender_impl(uint32_t sf,uint32_t bw,uint32_t classType,uint32_t NodeId);
+      RTSSender_impl(uint32_t sf,uint32_t bw,int classType,uint32_t NodeId);
       ~RTSSender_impl();
 
       // Where all the action really happens

@@ -36,7 +36,7 @@ namespace gr {
   namespace lora_rts_cts {
 
     RTSSender::sptr
-    RTSSender::make(uint32_t sf,uint32_t bw,uint32_t classType,uint32_t NodeId)
+    RTSSender::make(uint32_t sf,uint32_t bw,int classType,uint32_t NodeId)
     {
       return gnuradio::get_initial_sptr
         (new RTSSender_impl(sf,bw,classType,NodeId));
@@ -55,10 +55,13 @@ namespace gr {
 	 * NodeId --
 	 * 
 	*/
-    RTSSender_impl::RTSSender_impl(uint32_t sf,uint32_t bw,uint32_t classType,uint32_t NodeId)
+    RTSSender_impl::RTSSender_impl(uint32_t sf,uint32_t bw,int classType,uint32_t NodeId)
       : gr::block("RTSSender",
               gr::io_signature::make(1, 1, sizeof(gr_complex)),
-              gr::io_signature::make(0, 0, 0))
+              gr::io_signature::make(0, 0, 0)),
+		m_sf(sf),
+		m_bw(bw),
+		m_nodeId(NodeId)
     {
 		//注册并添加端口
 		m_receive_userdata_port = pmt::mp("UserDataIn");
@@ -105,6 +108,14 @@ namespace gr {
 		m_receive2_window_count = 1000;
 		//class B
 		m_slotReceive_window_count = 1000;
+
+		if(classType == 0){
+			m_classType = M_RTS_CLASSA;
+		}else if(classType == 1){
+			m_classType = M_RTS_CLASSB;
+		}else if(classType == 2){
+			m_classType = M_RTS_CLASSC;
+		}
 		
 	}
 

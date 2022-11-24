@@ -20,5 +20,9 @@
 install(FILES
     lora_rts_cts_RTSSender.block.yml
     lora_rts_cts_CTSSender.block.yml
-    lora_rts_cts_cadDetect.block.yml DESTINATION share/gnuradio/grc/blocks
+    lora_rts_cts_cadDetect.block.yml
+    lora_rts_cts_RTSSendToken.block.yml
+    lora_rts_cts_RTSReceiveToken.block.yml
+    lora_rts_cts_CTSReceiveToken.block.yml
+    lora_rts_cts_CTSSendToken.block.yml DESTINATION share/gnuradio/grc/blocks
 )

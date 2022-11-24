@@ -25,5 +25,9 @@ install(FILES
     api.h
     RTSSender.h
     CTSSender.h
-    cadDetect.h DESTINATION include/lora_rts_cts
+    cadDetect.h
+    RTSSendToken.h
+    RTSReceiveToken.h
+    CTSReceiveToken.h
+    CTSSendToken.h DESTINATION include/lora_rts_cts
 )

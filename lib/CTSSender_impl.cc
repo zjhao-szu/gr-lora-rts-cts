@@ -32,24 +32,24 @@ namespace gr {
   namespace lora_rts_cts {
 
     CTSSender::sptr
-    CTSSender::make(uint32_t sf,uint32_t bw,uint32_t sampRate,Class_Type class)
+    CTSSender::make(uint32_t sf,uint32_t bw,uint32_t sampRate,Class_Type classType)
     {
       return gnuradio::get_initial_sptr
-        (new CTSSender_impl(sf,bw,sampRate,class));
+        (new CTSSender_impl(sf,bw,sampRate,classType));
     }
 
 
     /*
      * The private constructor
      */
-    CTSSender_impl::CTSSender_impl(uint32_t sf,uint32_t bw,uint32_t sampRate,Class_Type class)
+    CTSSender_impl::CTSSender_impl(uint32_t sf,uint32_t bw,uint32_t sampRate,Class_Type classType)
       : gr::block("CTSSender",
               gr::io_signature::make(1,1, sizeof(gr_complex)),
               gr::io_signature::make(0, 0, 0)),
               m_sf(sf),
               m_bw(bw),
               m_sampRate(sampRate),
-              m_classType(class)
+              m_classType(classType)
     {
       //自动机状态切换
       m_state  = S_CTS_Reset;
@@ -77,7 +77,7 @@ namespace gr {
       //ping slot 时间间隔
       m_slotIntervalTime = SLOTINTERVALTIME;
       m_beaconIntervalTime = BEACONINTERVALTIME;
-      m_watiTime = 10;
+      m_waitTime = 10;
     }
 
     /*
@@ -102,13 +102,13 @@ namespace gr {
         int indexComma = str.find(",",indexId);
         int winNodeID = std::stoi(str.substr(indexColon+1,indexComma-indexColon));
         
-        int indexId = str.find("duration",0);
-        int indexColon = str.find(":",indexId);
+        indexId = str.find("duration",0);
+        indexColon = str.find(":",indexId);
         int duration = std::stoi(str.substr(indexColon+1));
         std::cout<<"收到来自节点NodeId:"<<winNodeID<<" duration: "<<duration<<std::endl;
-        m_nodeIdDurations.push_back(make_pair<int,int>(winNodeID,duration));
+        m_nodeIdDurations.push_back(std::make_pair<int,int>(winNodeID,duration));
         if(m_classType == CTS_ClassA ){
-          m_state = S_CTS_Send_CTS_CLassA;
+          m_state = S_CTS_Send_CTS_ClassA;
         }else if(m_classType == CTS_ClassB){
           m_state = S_CTS_Send_CTS_ClassB;
         }else if(m_classType == CTS_ClassC){
@@ -116,7 +116,7 @@ namespace gr {
         }
       }else{
         std::cout<<"************user data message******************"<<std::endl;
-        std::cout<<str<<endl;
+        std::cout<<str<<std::endl;
       }
     }
     void
@@ -152,12 +152,12 @@ namespace gr {
       unsigned int *out = (unsigned int *) output_items[0];
       
       if(m_classType == CTS_ClassB && m_start){ //首次立马发送beacon
-        m_state = s_CTS_Beacon;
+        m_state = S_CTS_Beacon;
         m_start = false;
       }else if(m_classType == CTS_ClassB && !m_start && m_beaconIntervalTime == 0){
         //到达beacon发送时间，发送beacon
         m_state = S_CTS_Beacon;
-      }else if(m_classType == CTS_ClassB && !m_start && m_slotInrervalTime == 0){
+      }else if(m_classType == CTS_ClassB && !m_start && m_slotIntervalTime == 0){
         m_state = S_CTS_Send_CTS_ClassB;
       }
 
@@ -169,7 +169,7 @@ namespace gr {
         if(m_beaconIntervalTime == 0){
           m_state = S_CTS_Beacon;
         }
-        if(m_slotInrervalTime == 0){
+        if(m_slotIntervalTime == 0){
           m_state = S_CTS_Send_CTS_ClassB;
         }
       }

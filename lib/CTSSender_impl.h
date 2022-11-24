@@ -63,7 +63,7 @@ namespace gr {
       uint32_t m_beaconIntervalTime;
       
       // std::vector<pair<int,int>> m_nodeIds; //ID和duration的结合 
-      std::queue<pair<int,int>> m_nodeIdDurations; //
+      std::queue<std::pair<int,int>> m_nodeIdDurations; //
 
       void receiveDataSolve(pmt::pmt_t msg);
       void receiveRTSSolve(pmt::pmt_t msg);
@@ -71,7 +71,7 @@ namespace gr {
       
 
      public:
-      CTSSender_impl(uint32_t sf,uint32_t bw,uint32_t sampRate,Class_Type class);
+      CTSSender_impl(uint32_t sf,uint32_t bw,uint32_t sampRate,Class_Type classType);
       ~CTSSender_impl();
 
       // Where all the action really happens

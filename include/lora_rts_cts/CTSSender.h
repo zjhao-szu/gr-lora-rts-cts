@@ -58,7 +58,7 @@ namespace gr {
        * class. lora_rts_cts::CTSSender::make is the public interface for
        * creating new instances.
        */
-      static sptr make(uint32_t sf,uint32_t bw,uint32_t sampRate,Class_Type class);
+      static sptr make(uint32_t sf,uint32_t bw,uint32_t sampRate,Class_Type classType);
     };
 
   } // namespace lora_rts_cts

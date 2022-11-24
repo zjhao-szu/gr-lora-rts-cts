@@ -28,6 +28,7 @@
 #include <string>
 #include <unordered_map>
 #include <queue>
+#include <string.h>
 namespace gr {
 
   namespace lora_rts_cts {
@@ -88,18 +89,17 @@ namespace gr {
 		
 
 		//休眠
-		uint32_t m_period__ms;
-		uint32_t m_before_receive1_ms;
-		uint32_t m_receiveCount;
-		uint32_t m_before_receive2_ms;
+
+
 		
 		void receiveDecodeMessage(pmt::pmt_t msg);  
-		std::unordered_map<string,string> parseMessage(std::string msgString);
+		std::unordered_map<std::string,std::string> parseMessage(std::string msgString);
 		
 		//模拟class A
+		uint32_t m_before_receive1_ms;
+		uint32_t m_before_receive2_ms;
 		uint32_t m_receive1_window_count;
 		uint32_t m_receive2_window_count;
-		
 		
 		//模拟class B
 		bool m_firstSendBeacon;

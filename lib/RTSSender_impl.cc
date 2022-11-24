@@ -145,73 +145,75 @@ namespace gr {
 		
 	}
 
-	std::unordered_map<string,string>
-	RTSSender_impl::parseMessage(std::string msgString){
-		std::unordered_map<string,string> map;
+	std::unordered_map<std::string,std::string>
+	RTSSender_impl::parseMessage(std::string str){
+		std::unordered_map<std::string,std::string> msgMap;
 		int indexColon = str.find(":");
 		int indexComma = str.find(",");
 		std::string type = str.substr(indexColon+1,indexComma);
-		map.emplace("Type",type);
+		msgMap.insert(make_pair("Type",type));
 		if(type == "Beacon"){
 			indexColon = str.find(":",indexComma);
 			indexComma = str.find(",",indexColon);
-			string beaconIntervalTime = str.substr(indexColon+1,indexComma);
-			map.emplace("IntervalTime",beaconIntervalTime);
+			std::string beaconIntervalTime = str.substr(indexColon+1,indexComma);
+			msgMap.emplace("IntervalTime",beaconIntervalTime);
 			indexColon = str.find(":",indexComma);
-			string slotTime = str.substr(indexColon+1,str.length() - indexColon - 1);
-			map.emplace("slotTime",slotTime);
+			std::string slotTime = str.substr(indexColon+1,str.length() - indexColon - 1);
+			msgMap.emplace("slotTime",slotTime);
 		}else if(type == "RTS" || type == "CTS"){
 			indexColon = str.find(":",indexComma);
 			indexComma = str.find(",",indexColon);
-			string beaconIntervalTime = str.substr(indexColon+1,indexComma);
-			map.emplace("NodeId",beaconIntervalTime);
+			std::string beaconIntervalTime = str.substr(indexColon+1,indexComma);
+			msgMap.emplace("NodeId",beaconIntervalTime);
 			indexColon = str.find(":",indexComma);
-			string slotTime = str.substr(indexColon+1,str.length() - indexColon - 1);
-			map.emplace("Duration",slotTime);
+			std::string slotTime = str.substr(indexColon+1,str.length() - indexColon - 1);
+			msgMap.emplace("Duration",slotTime);
 		}
-		return map;
+		return msgMap;
 	}
 	void
 	RTSSender_impl::receiveDecodeMessage(pmt::pmt_t msg){
 		//only state is receiving, resolve the message
-		if(m_state == S_RTS_RECEIVE1 || m_state == S_RTS_RECEIVE2 || m_state == S_RTS_RECEIVE_Slot || m_state == S_RTS_RECEIVE_CLass_C){
+		if(m_state == S_RTS_RECEIVE1 || m_state == S_RTS_RECEIVE2 || m_state == S_RTS_RECEIVE_Slot || m_state == S_RTS_RECEIVE_Class_C){
 			std::string str = pmt::symbol_to_string(msg);
 			if(str.find("Type") == std::string::npos){
 				messageDebugPrint(msg);
 			}else{
 				std::cout<<str<<std::endl;
-				std::unordered_map<string,string> mesMap = parseMessage(str);
-				if(mesMap["Type"] == "CTS"){
+				std::unordered_map<std::string,std::string> mesMap = parseMessage(str);
+				// mesMap["Type"] == "CTS"
+				std::string type = mesMap["Type"];
+				if(strcmp(type.c_str(),"CTS") == 0){
 					m_ReceiveNodeId = std::stoi(mesMap["NodeId"]);	
 					m_ReceiveDuration = std::stoi(mesMap["Duration"]);
-					std::cout<<"NodeID:"<<m_nodeId<<" receive CTS数据包!!!"<<<<std::endl;
-					std::cout<<"Receive winNode ID is"<<m_receiveNodeID<<" Duration:"<<m_ReceiveDuration<<std::endl;
+					std::cout<<"NodeID:"<<m_nodeId<<" receive CTS数据包!!!"<<std::endl;
+					std::cout<<"Receive winNode ID is"<<m_ReceiveNodeId<<" Duration:"<<m_ReceiveDuration<<std::endl;
 					if(m_ReceiveNodeId == m_nodeId){
-						cout<<"m_NodeId: "<<m_nodeId<<" 收到CTS数据包并且该节点为获胜节点!!!"<<std::endl;
+						std::cout<<"m_NodeId: "<<m_nodeId<<" 收到CTS数据包并且该节点为获胜节点!!!"<<std::endl;
 						m_state = S_RTS_Send_Data;
 					}else if(m_ReceiveNodeId != m_nodeId){
-						cout<<"m_NodeId: "<<m_nodeId<<" 收到CTS数据包,获胜节点为: "<<m_ReceiveNodeId<<std::endl;
+						std::cout<<"m_NodeId: "<<m_nodeId<<" 收到CTS数据包,获胜节点为: "<<m_ReceiveNodeId<<std::endl;
 						m_state = S_RTS_SLEEP;
 					}
-				}else if(mesMap["Type"] == "RTS"){
+				}else if(strcmp(type.c_str(),"RTS") == 0){
 					m_ReceiveNodeId = std::stoi(mesMap["NodeId"]);	
 					m_ReceiveDuration = std::stoi(mesMap["Duration"]);
-					std::cout<<"NodeID:"<<m_nodeId<<" receive RTS数据包!!!"<<<<std::endl;
-					std::cout<<"Receive winNode ID is "<<m_receiveNodeID<<" Duration: "<<m_ReceiveDuration<<std::endl;
+					std::cout<<"NodeID:"<<m_nodeId<<" receive RTS数据包!!!"<<std::endl;
+					std::cout<<"Receive winNode ID is "<<m_ReceiveNodeId<<" Duration: "<<m_ReceiveDuration<<std::endl;
 					if(m_ReceiveNodeId == m_nodeId){
-						cout<<"m_NodeId: "<<m_nodeId<<" 收到自身RTS,放弃ing!!!"<<std::endl;
+						std::cout<<"m_NodeId: "<<m_nodeId<<" 收到自身RTS,放弃ing!!!"<<std::endl;
 					}else if(m_ReceiveNodeId != m_nodeId){
-						cout<<"m_NodeId: "<<m_nodeId<<" 收到RTS数据包,通信节点为: "<<m_ReceiveNodeId<<std::endl;
+						std::cout<<"m_NodeId: "<<m_nodeId<<" 收到RTS数据包,通信节点为: "<<m_ReceiveNodeId<<std::endl;
 						m_state = S_RTS_SLEEP;
 					}
-				}else if(mesMap["Type"]  == "Beacon" ){
+				}else if(strcmp(type.c_str(),"Beacon") == 0){
 					m_beacon_Interval_Window = std::stoi(mesMap["IntervalTime"]);
-					m_slotReceive_Count = std::stoi(mesMap["slotTime"]);
+					m_slotReceive_window_count = std::stoi(mesMap["slotTime"]);
 				}else{
 					messageDebugPrint(msg);
 				}
 			} 
-		}
+		} 
     }
 
 	/********************************************************************
@@ -352,7 +354,7 @@ namespace gr {
 		if(m_classType == M_RTS_CLASSB && m_beacon_Interval_Window > 0 ){
 			m_beacon_Interval_Window--;
 			if(m_beacon_Interval_Window == 0){
-				m_state = S_RTS_Beacon;
+				m_state = S_RTS_BEACON;
 			}
 		}else if(m_classType == M_RTS_CLASSB && m_slotReceive_window_count > 0){
 			//compute left how much time about next slot;
@@ -440,7 +442,7 @@ namespace gr {
 				#endif
 				m_before_receive1_ms = 100;
 				if(m_classType == M_RTS_CLASSC){
-					m_state = S_RTS_RECEIVE_CLass_C;
+					m_state = S_RTS_RECEIVE_Class_C;
 				}else{
 					m_state = S_RTS_RECEIVE1;
 				}
@@ -491,8 +493,8 @@ namespace gr {
 			}
 			//class B slot window
 			case S_RTS_RECEIVE_Slot: {
-				m_slotReceive_Count--;
-				if(m_slotReceive_Count == 0){
+				m_slotReceive_window_count--;
+				if(m_slotReceive_window_count == 0){
 					std::cout<<"class B slot,接收窗口减一......"<<std::endl;
 					m_state = S_RTS_RESET;
 				}

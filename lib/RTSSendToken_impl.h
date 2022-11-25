@@ -22,17 +22,43 @@
 #define INCLUDED_LORA_RTS_CTS_RTSSENDTOKEN_IMPL_H
 
 #include <lora_rts_cts/RTSSendToken.h>
-
+#include <gnuradio/io_signature.h>
+#include <iostream>
+#include <fstream>
+#include "utilities.h"
 namespace gr {
   namespace lora_rts_cts {
 
     class RTSSendToken_impl : public RTSSendToken
     {
      private:
-      // Nothing to declare in this block.
+      uint8_t m_sf;
+      uint32_t m_samp_rate;
+      uint32_t m_bw;
+      uint32_t m_number_of_bins;
+      uint32_t m_samples_per_symbol;
+      std::vector<uint16_t> m_sync_words;    
+
+      int m_oversample_rate;
+      int m_inter_frame_padding;
+      int m_frame_len;
+
+      
+
+      std::vector<gr_complex> m_upchirp;
+      std::vector<gr_complex> m_downchirp;
+
+      uint8_t m_up; //preamble 长度
+      int32_t symb_cnt; //发送lora信号的symbol
+      uint32_t preamb_symb_cnt; //前导码symbol
+
+      pmt::pmt_t m_receiveRTSTokenPort;
+      void sendRTSToken();
+      void receiveRTSToken(pmt::pmt_t msg);
+      STATE_RTS_TOKEN m_state;
 
      public:
-      RTSSendToken_impl();
+      RTSSendToken_impl(uint8_t sf, uint32_t samp_rate, uint32_t bw, std::vector<uint16_t> sync_words,uint32_t nodeToken);
       ~RTSSendToken_impl();
 
       // Where all the action really happens

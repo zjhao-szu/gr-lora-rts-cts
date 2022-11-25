@@ -29,10 +29,27 @@ namespace gr {
     class CTSSendToken_impl : public CTSSendToken
     {
      private:
-      // Nothing to declare in this block.
+      uint8_t m_sf;
+      uint32_t m_samp_rate;
+      uint32_t m_bw;
+      uint32_t m_number_of_bins;
+      uint32_t m_samples_per_symbol;
+      std::vector<uint16_t> m_sync_words;    
+      int m_oversample_rate;
+      std::vector<gr_complex> m_upchirp;
+      std::vector<gr_complex> m_downchirp;
 
+      uint8_t m_up; //preamble 长度
+      uint32_t preamb_symb_cnt; //前导码symbol
+
+      uint32_t  m_CTSToken;  
+      pmt::pmt_t m_receiveCTSTokenPort;
+
+      CTS_TOKEN_STATE m_state;
+      void receiveCTSToken(pmt::pmt_t msg);
+      void sendCTSToken();
      public:
-      CTSSendToken_impl();
+      CTSSendToken_impl(uint8_t sf, uint32_t samp_rate, uint32_t bw, std::vector<uint16_t> sync_words);
       ~CTSSendToken_impl();
 
       // Where all the action really happens

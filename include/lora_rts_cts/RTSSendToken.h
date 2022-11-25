@@ -26,7 +26,10 @@
 
 namespace gr {
   namespace lora_rts_cts {
-
+    enum STATE_RTS_TOKEN{
+      STATE_RTS_RESET,
+      STATE_RTS_SEND_TOKEN
+    }
     /*!
      * \brief <+description of block+>
      * \ingroup lora_rts_cts
@@ -45,7 +48,7 @@ namespace gr {
        * class. lora_rts_cts::RTSSendToken::make is the public interface for
        * creating new instances.
        */
-      static sptr make();
+      static sptr make(uint8_t sf, uint32_t samp_rate, uint32_t bw, std::vector<uint16_t> sync_words,uint32_t nodeToken);
     };
 
   } // namespace lora_rts_cts

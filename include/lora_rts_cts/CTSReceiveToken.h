@@ -26,6 +26,13 @@
 
 namespace gr {
   namespace lora_rts_cts {
+    enum RECEIVE_TOKEN{
+      STATE_TOKEN_DETECT_PREMBLE,
+      STATE_TOKEN_SYNC,
+      STATE_TOKEN_FIND_SFD,
+      STATE_TOKEN_PAUSE,
+      STATE_TOKEN_READ_TOKEN
+    }
 
     /*!
      * \brief <+description of block+>

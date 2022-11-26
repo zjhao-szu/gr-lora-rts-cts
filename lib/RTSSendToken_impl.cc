@@ -65,7 +65,7 @@ namespace gr {
       }
 
       m_up = 8;
-      preamb_symb_cnt = 0;
+      premab_symb_cnt = 0;
 
       m_receiveRTSTokenPort = pmt::mp("RTSToken");
       message_port_register_in(m_receiveRTSTokenPort);
@@ -132,7 +132,6 @@ namespace gr {
                   //correct offset dur to quarter of downchirp
                   output_offset -= 3 * m_samples_per_symbol / 4;
                   symb_cnt = 0;
-                  
               }
               output_offset += m_samples_per_symbol;
               preamb_symb_cnt++;

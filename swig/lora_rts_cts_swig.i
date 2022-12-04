@@ -15,6 +15,7 @@
 #include "lora_rts_cts/RTSReceiveToken.h"
 #include "lora_rts_cts/CTSReceiveToken.h"
 #include "lora_rts_cts/CTSSendToken.h"
+#include "lora_rts_cts/writeParaData.h"
 %}
 
 %include "lora_rts_cts/RTSSender.h"
@@ -31,3 +32,5 @@ GR_SWIG_BLOCK_MAGIC2(lora_rts_cts, RTSReceiveToken);
 GR_SWIG_BLOCK_MAGIC2(lora_rts_cts, CTSReceiveToken);
 %include "lora_rts_cts/CTSSendToken.h"
 GR_SWIG_BLOCK_MAGIC2(lora_rts_cts, CTSSendToken);
+%include "lora_rts_cts/writeParaData.h"
+GR_SWIG_BLOCK_MAGIC2(lora_rts_cts, writeParaData);

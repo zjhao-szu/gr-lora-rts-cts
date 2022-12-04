@@ -29,5 +29,6 @@ install(FILES
     RTSSendToken.h
     RTSReceiveToken.h
     CTSReceiveToken.h
-    CTSSendToken.h DESTINATION include/lora_rts_cts
+    CTSSendToken.h
+    writeParaData.h DESTINATION include/lora_rts_cts
 )

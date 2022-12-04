@@ -30,6 +30,7 @@ list(APPEND lora_rts_cts_sources
     RTSReceiveToken_impl.cc
     CTSReceiveToken_impl.cc
     CTSSendToken_impl.cc
+    writeParaData_impl.cc
 )
 
 set(lora_rts_cts_sources "${lora_rts_cts_sources}" PARENT_SCOPE)

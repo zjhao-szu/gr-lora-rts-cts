@@ -24,5 +24,6 @@ install(FILES
     lora_rts_cts_RTSSendToken.block.yml
     lora_rts_cts_RTSReceiveToken.block.yml
     lora_rts_cts_CTSReceiveToken.block.yml
-    lora_rts_cts_CTSSendToken.block.yml DESTINATION share/gnuradio/grc/blocks
+    lora_rts_cts_CTSSendToken.block.yml
+    lora_rts_cts_writeParaData.block.yml DESTINATION share/gnuradio/grc/blocks
 )

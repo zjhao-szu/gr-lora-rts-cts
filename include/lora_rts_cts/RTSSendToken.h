@@ -29,7 +29,7 @@ namespace gr {
     enum STATE_RTS_TOKEN{
       STATE_RTS_RESET,
       STATE_RTS_SEND_TOKEN
-    }
+    };
     /*!
      * \brief <+description of block+>
      * \ingroup lora_rts_cts

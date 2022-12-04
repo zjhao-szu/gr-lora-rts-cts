@@ -29,6 +29,7 @@
 #include <unordered_map>
 #include <queue>
 #include <string.h>
+#include <time.h>
 namespace gr {
 
   namespace lora_rts_cts {
@@ -42,6 +43,7 @@ namespace gr {
 		pmt::pmt_t m_out_userdata;
 		pmt::pmt_t m_out_RTS;
 		pmt::pmt_t m_receiveLoRaDecodeMessage;
+		pmt::pmt_t m_receiveCTSMessage;
 
 		//存储当前用户要发送的数据
 		std::vector<std::string> m_userDatas;
@@ -81,7 +83,8 @@ namespace gr {
 		bool CADDetect_MinBin();
 
 		//发送RTS，基于两种模式
-		void receiveDecodeMessage();
+		void receiveDecodeMessage(pmt::pmt_t msg);
+		void receiveCTSMsg(pmt::pmt_t msg);
 		//模式一：RTS、CTS利用数据包发送
 		void sendRTSByPacket();
 		//模式二：RTS/CTS序列化发送
@@ -117,7 +120,25 @@ namespace gr {
 		//debug
 		void  messageDebugPrint(const pmt::pmt_t &msg);
 
+		uint32_t m_CTSToken;
 
+		//记录实验数据
+		pmt::pmt_t m_outParaPort;
+		uint32_t m_paraState; //用于记录阶段 1：DIFS 2：RTS 3：Receive1 4：Receive2 4：sendData
+		struct timeval m_startTime,m_endTime;
+		double m_totalTime;//DIFS时间 + SIFS时间 + RTS 时间 + Receive接收窗口时间
+		//记录DIFS时间
+		
+		struct timeval m_startDIFSTime,m_endDIFSTime;
+		double m_DIFSTime;
+		//记录RTS时间
+		
+		//记录接收窗口时间
+		struct timeval m_startReceiveTime,m_endReceiveTime;
+		double m_receiveTime;
+		double getTimeval(const struct timeval startTime,const struct timeval endTime);
+		void sendParaMsg();
+		
     public:
       RTSSender_impl(uint32_t sf,uint32_t bw,int classType,uint32_t NodeId);
       ~RTSSender_impl();

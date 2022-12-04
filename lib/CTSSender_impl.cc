@@ -100,6 +100,17 @@ namespace gr {
      ***********************************************************************/
     void
     CTSSender_impl::receiveRTSSolve(const pmt::pmt_t msg){ //根据接收模块接收的数据打印数据
+      uint32_t nodeToken = pmt::to_double(msg);
+      m_nodeIdDurations.push(stD::make_pair<int,int>((nodeToken+1)/2),0);
+    }
+    void
+    CTSSender_impl::receiveDataSolve(pmt::pmt_t msg){ //根据USRP模块接收的信号，就地解析数据
+      //do nothing
+      std::cout<<"接收到了用户信息:"<<std::endl;
+      std::cout<<pmt::symbol_to_string(msg)<<std::endl;
+
+      
+
       if(m_state != S_CTS_Receive) return;
       std::string str = pmt::symbol_to_string(msg);
       //message 格式：“Type:RTS,NodeID:10,duration:1000”
@@ -126,12 +137,6 @@ namespace gr {
         std::cout<<"************user data message******************"<<std::endl;
         std::cout<<str<<std::endl;
       }
-    }
-    void
-    CTSSender_impl::receiveDataSolve(pmt::pmt_t msg){ //根据USRP模块接收的信号，就地解析数据
-      //do nothing
-      std::cout<<"接收到了用户信息:"<<std::endl;
-      std::cout<<pmt::symbol_to_string(msg)<<std::endl;
     }
 
 
@@ -242,9 +247,14 @@ namespace gr {
         
   
         //class A采用先来先服务策略
-        message = "type:CTS,NodeId:"+std::to_string(winNodeId)+"Duration:"+std::to_string(winDuration);
-        pmt::pmt_t pmtmsg = pmt::string_to_symbol(message);
-        message_port_pub(m_out_data_port,pmtmsg);
+        //采用data数据
+        // message = "type:CTS,NodeId:"+std::to_string(winNodeId)+"Duration:"+std::to_string(winDuration);
+        // pmt::pmt_t pmtmsg = pmt::string_to_symbol(message);
+        // message_port_pub(m_out_data_port,pmtmsg);
+
+        //采用downchirp
+        pmt::pmt_t CTSToken = pmt::from_uint64(winNodeId);
+        message_port_pub(m_out_CTS_port,CTSToken);
         m_state = S_CTS_Receive;
         break;
       }
@@ -258,10 +268,16 @@ namespace gr {
             int winNodeId = m_nodeIdDurations.front().first;
             int winDuration = m_nodeIdDurations.front().second;
             std::cout<<"=====Class B采用先来先服务策略==="<<std::endl;
+            
             std::cout<<"当前网关未与人通信,获胜节点为:"<<winNodeId<<" duration:"<<winDuration<<std::endl;
-            std::string message = "type:CTS,NodeId:"+std::to_string(winNodeId)+",Duration:"+std::to_string(winDuration);
-            pmt::pmt_t pmtmsg = pmt::string_to_symbol(message);
-            message_port_pub(m_out_data_port,pmtmsg);
+            //采用data数据
+            // std::string message = "type:CTS,NodeId:"+std::to_string(winNodeId)+",Duration:"+std::to_string(winDuration);
+            // pmt::pmt_t pmtmsg = pmt::string_to_symbol(message);
+            // message_port_pub(m_out_data_port,pmtmsg);
+            //采用downchirp
+            pmt::pmt_t CTSToken = pmt::from_uint64(winNodeId);
+            message_port_pub(m_out_CTS_port,CTSToken);
+
           }
           m_state = S_CTS_Receive;
           m_slotIntervalTime = SLOTINTERVALTIME;
@@ -291,9 +307,13 @@ namespace gr {
           winDuration = m_nodeIdDurations.front().second;
         }
         //class A采用先来先服务策略
-        message = "Type:CTS,NodeId:"+std::to_string(winNodeId)+",Duration:"+std::to_string(winDuration);
-        pmt::pmt_t pmtmsg = pmt::string_to_symbol(message);
-        message_port_pub(m_out_data_port,pmtmsg);
+        // message = "Type:CTS,NodeId:"+std::to_string(winNodeId)+",Duration:"+std::to_string(winDuration);
+        // pmt::pmt_t pmtmsg = pmt::string_to_symbol(message);
+        // message_port_pub(m_out_data_port,pmtmsg);
+        //采用downchirp
+        pmt::pmt_t CTSToken = pmt::from_uint64(winNodeId);
+        message_port_pub(m_out_CTS_port,CTSToken);
+
         m_state = S_CTS_Receive;
         break;
       }

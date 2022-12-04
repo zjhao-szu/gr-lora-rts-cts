@@ -72,6 +72,10 @@ namespace gr {
       set_msg_handler(m_receiveRTSTokenPort, boost::bind(&RTSSendToken_impl::receiveRTSToken, this, _1));
       m_state = STATE_RTS_RESET;
 
+      m_outParaPort = pmt::mp("outPara");
+      message_port_register_out(m_outParaPort);
+
+      m_RTSTime = 0;
     }
 
     /*
@@ -87,6 +91,12 @@ namespace gr {
       m_state = STATE_RTS_SEND_TOKEN;
     }
 
+    double
+    RTSSendToken_impl::getTimeval(const struct timeval startTime,const struct timeval endTime){
+      double stime =  startTime.tv_sec * 1000 + startTime.tv_usec / 1000;
+      double etime = endTime.tv_sec * 1000 + endTime.tv_usec/1000;
+      return etime - stime;
+    }
     void
     RTSSendToken_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
     {
@@ -109,6 +119,7 @@ namespace gr {
         m_up = 8;
         preamb_symb_cnt = 0;
       }
+      gettimeofday(&m_startRTSTime,NULL);
       int output_offset = 0;
       preamb_symb_cnt = 0;
       for (int i = 0; i < noutput_items / m_samples_per_symbol; i++)
@@ -144,7 +155,10 @@ namespace gr {
         output_offset += m_samples_per_symbol; 
       }
 
-
+      gettimeofday(&m_endRTSTime,NULL);
+      m_RTSTime = getTimeval(m_startRTSTime,m_endRTSTime);
+      
+      message_port_pub(m_outParaPort,m_RTSTime);
       // Do <+signal processing+>
       // Tell runtime system how many input items we consumed on
       

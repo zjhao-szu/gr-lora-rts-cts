@@ -22,14 +22,36 @@
 #define INCLUDED_LORA_RTS_CTS_WRITEPARADATA_IMPL_H
 
 #include <lora_rts_cts/writeParaData.h>
-
+#include <fstream>
+#include <iostream>
+#include <vector>
+#include <string>
 namespace gr {
+
   namespace lora_rts_cts {
 
     class writeParaData_impl : public writeParaData
     {
      private:
-      // Nothing to declare in this block.
+     pmt::pmt_t m_macInPort,m_RTSInPort;
+     std::ofstream out_file;
+     
+     uint32_t m_nodeId;
+     uint32_t m_state;//1: choose channel 2:DIFS  3:BO  4:UPDATE  5:TX
+     bool m_sendSuccess;
+     double m_difsTime;
+     double m_RTSTime;
+     double m_receiveTime;
+
+    uint32_t m_realBytes;
+    uint32_t m_sendFrameCnt;
+    double m_StartTime;
+    double m_endTime;
+    double m_phyTotalTime;    
+
+    void receiveMAC(pmt::pmt_t msg);
+    void receivePHY(pmt::pmt_t msg);
+    void wirteData();
 
      public:
       writeParaData_impl();

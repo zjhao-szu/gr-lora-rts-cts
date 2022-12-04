@@ -57,6 +57,10 @@ namespace gr {
       void receiveRTSToken(pmt::pmt_t msg);
       STATE_RTS_TOKEN m_state;
 
+      pmt::pmt_t m_outParaPort;
+      struct timeval m_startRTSTime,m_endRTSTime;
+		  double m_RTSTime;
+      double getTimeval(const struct timeval startTime,const struct timeval endTime);
      public:
       RTSSendToken_impl(uint8_t sf, uint32_t samp_rate, uint32_t bw, std::vector<uint16_t> sync_words,uint32_t nodeToken);
       ~RTSSendToken_impl();
